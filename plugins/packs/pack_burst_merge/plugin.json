@@ -1,0 +1,16 @@
+{
+  "id": "pack_burst_merge",
+  "name": "连发合并（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "burst_merge.py",
+  "permissions": [
+    "read_message"
+  ],
+  "description": "同一人在短时间内连续发消息时，等他发完再一起回复。被 @ 或被叫昵称时**不等待**、立刻回；其余情况对方静默 quietMs（默认 0.6 秒）就开口，最长不超过合并窗口 capMs。",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": true,
+  "category": "rhythm",
+  "source": "builtin:burst_merge"
+}

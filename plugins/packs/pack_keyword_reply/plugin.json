@@ -1,0 +1,16 @@
+{
+  "id": "pack_keyword_reply",
+  "name": "关键词自动回复（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "keyword_reply.py",
+  "permissions": [
+    "read_message"
+  ],
+  "description": "消息包含关键词时直接返回预设回复，不经过AI",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": false,
+  "category": "utility",
+  "source": "builtin:keyword_reply"
+}

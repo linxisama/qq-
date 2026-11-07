@@ -1,0 +1,16 @@
+{
+  "id": "pack_question_relay",
+  "name": "问号接龙（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "question_relay.py",
+  "permissions": [
+    "read_message"
+  ],
+  "description": "群里连续发问号时，机器人跟着发一个问号",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": false,
+  "category": "social",
+  "source": "builtin:question_relay"
+}

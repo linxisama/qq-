@@ -1,0 +1,16 @@
+{
+  "id": "pack_audio_assets_config",
+  "name": "音频素材与路由（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "audio_assets_config.py",
+  "permissions": [
+    "read_message"
+  ],
+  "description": "配置 TTS 引擎路由、参考/歌曲素材（原生上传入口）与数据去向。云出网、自动语音、电脑控制默认关闭；上传文件复制到运行数据目录后使用。",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": false,
+  "category": "voice",
+  "source": "builtin:audio_assets_config"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "pack_early_finish",
+  "name": "提前收尾（省 token）（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "early_finish.py",
+  "permissions": [
+    "send_message"
+  ],
+  "description": "移植自 JS 插件 early-finish。已交付完毕、没有遗留动作的这一轮，不再为可选的锦上添花动作多花一次模型调用：跳过“该不该接话”的判定调用和“让 AI 选表情”的选择调用。有工具失败、结尾是“我去看看”这类预告、或预告要交图却没交时，一律按正常流程走。不碰提示词、不改人设、不拦发言；“试运行”只记日志不真的省。",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": false,
+  "category": "utility",
+  "source": "builtin:early_finish"
+}

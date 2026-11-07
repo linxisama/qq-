@@ -1,0 +1,17 @@
+{
+  "id": "pack_at_mention",
+  "name": "@群友（按名字）（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "at_mention.py",
+  "permissions": [
+    "read_message",
+    "send_message"
+  ],
+  "description": "让机器人用名字 @ 群友：它在正文里写「@泡影之梦 你说得对」时，这里把名字认领成真正的 QQ @ 提醒（对方会收到红点），而不是一串没人看得到的普通字符。支持一次 @ 多人。认不出名字就按原样发送，绝不猜——猜错会 @ 到无关的人。（降级说明：群成员名单靠观察最近说过话的人累积，没说过话的人认不出来。）",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": false,
+  "category": "message",
+  "source": "builtin:at_mention"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "pack_local_agent_control",
+  "name": "本地电脑操作（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "local_agent_control.py",
+  "permissions": [
+    "read_message"
+  ],
+  "description": "主人私聊“电脑 状态/能力/打开X/音量N/暂停媒体”生成动作提案，在本地控制台批准后由 Windows Agent 执行（首版 L0/L1）。群聊/引用不触发；审批绑定参数；结果只回原私聊。",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": false,
+  "category": "agent",
+  "source": "builtin:local_agent_control"
+}

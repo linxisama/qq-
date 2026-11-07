@@ -1,0 +1,16 @@
+{
+  "id": "pack_repeat_echo",
+  "name": "群聊复读机（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "repeat_echo.py",
+  "permissions": [
+    "read_message"
+  ],
+  "description": "当多人说了相同的话时，机器人跟着复读。纯媒体占位（[图片]、[表情:微笑]、[语音]…）不复读 —— 多人发表情包会得到相同占位文本，复读它只是刷屏。",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": false,
+  "category": "social",
+  "source": "builtin:repeat_echo"
+}

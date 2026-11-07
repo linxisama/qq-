@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>心情系统 · 全景</title>
+<style>
+:root{color-scheme:dark;font-family:"Microsoft YaHei",system-ui,sans-serif;color:#eaf1ff;background:#0b1220}
+*{box-sizing:border-box}body{margin:0}
+.wrap{max-width:1240px;margin:auto;padding:24px 22px 70px}
+.head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:18px}
+h1{font-size:22px;margin:0 0 6px}h2{font-size:16px;margin:0 0 6px}
+.sub{color:#8b95a7;font-size:13px;line-height:1.7;margin:0}
+.card{background:#131f31;border:1px solid #273750;border-radius:16px;padding:20px 22px;margin-bottom:16px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button{font:inherit;font-size:13px;border:0;border-radius:8px;padding:10px 15px;background:#58d5c5;color:#062523;cursor:pointer}
+button.ghost{background:#2b3b54;color:#edf3ff}
+button.on{background:#ff7ab8;color:#2a0d1b}
+button.warn{background:#7a1f1f;color:#ffd0d0}
+a.btn{text-decoration:none;display:inline-block}
+.clock{font-size:14px;color:#c4d2e5;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:16px}
+.chip{font-size:12px;padding:4px 10px;border-radius:999px;background:#1b3046;color:#a9bad0}
+.chip.live{background:#123b33;color:#7ce8c8}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px}
+.gcard{position:relative;background:#0f1b2b;border:1px solid #22344c;border-radius:12px;padding:11px 12px 15px;overflow:hidden}
+.gcard .lab{font-size:12px;color:#8b95a7}
+.gcard .val{font-size:24px;font-weight:700;line-height:1.25;margin-top:2px}
+.gcard .val small{font-size:11px;font-weight:400;color:#5f6d80;margin-left:2px}
+.gcard .tier{font-size:11px;color:#7d8798;margin-top:2px;min-height:14px}
+.gcard .bar{position:absolute;left:0;bottom:0;height:3px;border-radius:0 3px 3px 0}
+.slider{display:grid;grid-template-columns:66px 1fr 78px 74px;gap:12px;align-items:center;padding:7px 0;border-bottom:1px solid #1b283a}
+.slider:last-child{border-bottom:0}
+.slider .nm{font-size:13px;color:#c4d2e5}
+.slider .nm small{display:block;font-size:11px;color:#5f6d80;margin-top:2px}
+.slider .nv{font-size:14px;color:#eaf1ff;text-align:right}
+.slider .nv small{font-size:11px;color:#5f6d80}
+input[type=range]{width:100%;-webkit-appearance:none;background:transparent;height:22px}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:#22344c}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--c,#58d5c5);margin-top:-5px;border:0}
+.inp{flex:1;min-width:220px;font:inherit;font-size:13px;background:#0c1625;border:1px solid #344760;border-radius:8px;color:#eff5ff;padding:10px 12px}
+.notice{padding:12px 16px;background:#1b3046;border-radius:10px;margin-bottom:16px;font-size:13px;color:#ffd9a8}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#1b3046;color:#eaf1ff;font-size:13px;padding:10px 18px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:9}
+/* 嵌进控制台标签页时（/heart?embed=1）：去掉整页留白与外链，只留内容 */
+.embed{background:transparent}
+.embed .wrap{max-width:none;padding:0}
+.embed .head{margin-bottom:14px}
+.embed .head h1,.embed .head .sub,.embed .head a.btn{display:none}
+.embed .card:last-of-type{margin-bottom:0}
+.toast.show{opacity:1}
+</style></head>
+<body>
+<main class="wrap">
+  <header class="head">
+    <div>
+      <h1>心情系统 · 全景</h1>
+      <p class="sub">一眼看全部数值 · 拖滑杆下动词 · 改完立刻生效</p>
+    </div>
+    <div class="row">
+      <button id="master">● 总开关：开</button>
+      <button id="refresh" class="ghost">↻ 刷新</button>
+      <a class="btn ghost" href="/">← 控制台</a>
+    </div>
+  </header>
+
+  <div id="notice" class="notice" hidden></div>
+
+  <section class="card">
+    <div id="clock" class="clock">载入中…</div>
+    <div id="grid" class="grid"></div>
+  </section>
+
+  <section class="card">
+    <h2>模式开关</h2>
+    <p class="sub">只影响“愿不愿意主动”，不改数值</p>
+    <div id="modes" class="row" style="margin-top:12px"></div>
+  </section>
+
+  <section class="card">
+    <h2>睡眠闸门</h2>
+    <p class="sub">睡着后群里普通消息不再回应；被点名、喊醒词或私聊才醒</p>
+    <div id="gates" class="row" style="margin-top:12px"></div>
+    <div class="row" style="margin-top:12px">
+      <input id="busy" class="inp" placeholder="现在在忙什么…（留空表示不忙）">
+      <button id="busySet">现在在忙</button>
+      <button id="busyClear" class="ghost">清空</button>
+    </div>
+    <p id="gateState" class="sub" style="margin-top:10px"></p>
+  </section>
+
+  <section class="card">
+    <h2>情绪五维</h2>
+    <p class="sub">时间衰减 · 被夸/被怼驱动 · 拖一下立刻生效</p>
+    <div id="sliders" style="margin-top:10px"></div>
+    <div class="row" style="margin-top:12px">
+      <button id="cheer">全部叫好</button>
+      <button id="reset" class="ghost">全部归零</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>主人健康</h2>
+    <p class="sub">只做记录，不参与判定</p>
+    <div id="health" class="row" style="margin-top:12px"></div>
+  </section>
+</main>
+<div id="toast" class="toast"></div>
+<script>
+(function () {
+  'use strict';
+  var API = '/api/heart';
+  if (/[?&]embed=1(&|$)/.test(location.search)) document.documentElement.classList.add('embed');
+  var COLORS = {
+    happy: '#3ddc97', excited: '#f5a623', anger: '#f2545b', jealous: '#e0567a',
+    sad: '#5b8def', affection: '#ff7ab8', libido: '#b06bff', lust: '#c46bff',
+    quarrel: '#ff8a3d', angerCh: '#e0483f', fatigue: '#7f8fa6', depress: '#8a94a6',
+    satisfy: '#4ecb8d', desire: '#ff9f43'
+  };
+  var state = null;
+  var busyText = '';
+  var toastTimer = 0;
+
+  function $(id) { return document.getElementById(id); }
+
+  function el(tag, cls, text) {
+    var node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text !== undefined && text !== null) node.textContent = String(text);
+    return node;
+  }
+
+  function toast(msg) {
+    var box = $('toast');
+    box.textContent = msg;
+    box.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { box.classList.remove('show'); }, 1800);
+  }
+
+  function notice(msg) {
+    var box = $('notice');
+    if (!msg) { box.hidden = true; box.textContent = ''; return; }
+    box.hidden = false;
+    box.textContent = msg;
+  }
+
+  function api(path, body) {
+    var opt = { credentials: 'same-origin', headers: {} };
+    if (body) {
+      opt.method = 'POST';
+      opt.headers['content-type'] = 'application/json';
+      opt.headers['x-dsh-heart'] = '1';
+      opt.body = JSON.stringify(body);
+    }
+    return fetch(API + path, opt).then(function (res) {
+      return res.json().catch(function () { return { ok: false, message: '服务端返回了非 JSON（HTTP ' + res.status + '）' }; });
+    });
+  }
+
+  function set(body) {
+    return api('/action', body).then(function (r) {
+      if (!r || !r.ok) {
+        toast((r && (r.message || r.error)) || '没改成');
+        if (r && r.state) { state = r.state; render(); }
+        return r;
+      }
+      state = r.state;
+      render();
+      return r;
+    }).catch(function (e) { toast('请求失败：' + (e && e.message ? e.message : e)); });
+  }
+
+  function gcard(g) {
+    var color = COLORS[g.key] || '#8b95a7';
+    var card = el('div', 'gcard');
+    card.appendChild(el('div', 'lab', g.label));
+    var val = el('div', 'val');
+    var big = el('span', null, String(Math.round(g.value)));
+    big.style.color = color;
+    val.appendChild(big);
+    val.appendChild(el('small', null, '/' + g.max));
+    card.appendChild(val);
+    card.appendChild(el('div', 'tier', g.tier));
+    var bar = el('div', 'bar');
+    bar.style.background = color;
+    bar.style.width = Math.max(0, Math.min(100, (g.value / g.max) * 100)) + '%';
+    card.appendChild(bar);
+    return card;
+  }
+
+  function renderClock(s) {
+    var box = $('clock');
+    box.textContent = '';
+    box.appendChild(el('span', null, '🕐 ' + s.clock.text));
+    var sleeping = s.sleep && s.sleep.state === 'sleeping';
+    box.appendChild(el('span', 'chip' + (sleeping ? '' : ' live'), sleeping ? '睡着中' : '清醒'));
+    if (s.paused) box.appendChild(el('span', 'chip', '心情暂停中'));
+    if (s.busy && s.busy.text) box.appendChild(el('span', 'chip', '在忙：' + s.busy.text));
+    var top = null;
+    s.gauges.forEach(function (g) {
+      if (g.value < g.base) return;
+      if (!top || g.value > top.value) top = g;
+    });
+    if (top) box.appendChild(el('span', 'chip', top.label + ' ' + Math.round(top.value) + '/' + top.max));
+  }
+
+  function renderModes(s) {
+    var box = $('modes');
+    box.textContent = '';
+    s.modes.forEach(function (m) {
+      var b = el('button', m.on ? 'on' : 'ghost', (m.on ? '● ' : '○ ') + m.label);
+      b.addEventListener('click', function () { set({ action: 'mode', key: m.key, on: !m.on }); });
+      box.appendChild(b);
+    });
+  }
+
+  function renderGates(s) {
+    var box = $('gates');
+    box.textContent = '';
+    var sleeping = s.sleep && s.sleep.state === 'sleeping';
+    var nap = el('button', 'ghost', '哄睡（立刻安静）');
+    nap.addEventListener('click', function () { set({ action: 'sleep', act: 'sleep' }); });
+    var wake = el('button', 'ghost', '叫醒');
+    wake.addEventListener('click', function () { set({ action: 'sleep', act: 'wake' }); });
+    var gate = el('button', (s.gates && s.gates.fatigue) ? 'on' : 'ghost',
+      '疲劳门控：' + ((s.gates && s.gates.fatigue) ? '开' : '关'));
+    gate.addEventListener('click', function () {
+      set({ action: 'gate', key: 'fatigue', on: !(s.gates && s.gates.fatigue) });
+    });
+    var pause = el('button', s.paused ? 'warn' : 'ghost', s.paused ? '心情已暂停（点我恢复）' : '心情暂停');
+    pause.addEventListener('click', function () { set({ action: 'sleep', act: s.paused ? 'resume' : 'pause' }); });
+    box.appendChild(nap); box.appendChild(wake); box.appendChild(gate); box.appendChild(pause);
+
+    var busy = $('busy');
+    if (document.activeElement !== busy) {
+      busyText = (s.busy && s.busy.text) || '';
+      busy.value = busyText;
+    }
+    var reply = sleeping ? ' · 群里普通消息不回应' : ' · 照常回消息';
+    $('gateState').textContent = '现在：' + (sleeping ? '睡着' : '清醒')
+      + ((s.busy && s.busy.text) ? ' · 在忙「' + s.busy.text + '」' : '')
+      + (s.paused ? ' · 心情暂停中（不注入、不改数值）' : reply);
+  }
+
+  function renderSliders(s) {
+    var box = $('sliders');
+    box.textContent = '';
+    (s.dimensions || []).forEach(function (g) {
+      if (!g) return;
+      var row = el('div', 'slider');
+      var nm = el('div', 'nm');
+      nm.appendChild(el('span', null, g.label));
+      nm.appendChild(el('small', null, g.eta ? '约 ' + g.eta + ' 分钟后回落一档' : g.tier));
+      var rng = document.createElement('input');
+      rng.type = 'range'; rng.min = '0'; rng.max = String(g.max); rng.step = '1';
+      rng.value = String(Math.round(g.value));
+      rng.style.setProperty('--c', COLORS[g.key] || '#58d5c5');
+      var nv = el('div', 'nv');
+      nv.appendChild(el('span', null, String(Math.round(g.value))));
+      nv.appendChild(el('small', null, '/' + g.max));
+      rng.addEventListener('input', function () { nv.firstChild.textContent = rng.value; });
+      rng.addEventListener('change', function () {
+        set({ action: 'value', key: g.key, value: Number(rng.value) });
+      });
+      var zero = el('button', 'ghost', '归零');
+      zero.addEventListener('click', function () { set({ action: 'value', key: g.key, value: 0 }); });
+      row.appendChild(nm); row.appendChild(rng); row.appendChild(nv); row.appendChild(zero);
+      box.appendChild(row);
+    });
+  }
+
+  function renderHealth(s) {
+    var box = $('health');
+    box.textContent = '';
+    var health = s.health || {};
+    var counters = s.counters || {};
+    box.appendChild(el('span', 'chip', '本周 ' + (health.perWeek || 0) + ' 次'));
+    box.appendChild(el('span', 'chip', '累计回合 ' + (counters.turns || 0)));
+    box.appendChild(el('span', 'chip', '工具报错 ' + (counters.errors || 0)));
+  }
+
+  function render() {
+    if (!state) return;
+    var master = (state.modes || []).filter(function (m) { return m.key === 'master'; })[0];
+    var on = !!(master && master.on);
+    var btn = $('master');
+    btn.textContent = (on ? '● 总开关：开' : '○ 总开关：关');
+    btn.className = on ? '' : 'ghost';
+
+    renderClock(state);
+    var grid = $('grid');
+    grid.textContent = '';
+    (state.gauges || []).forEach(function (g) { grid.appendChild(gcard(g)); });
+    renderModes(state);
+    renderGates(state);
+    renderSliders(state);
+    renderHealth(state);
+  }
+
+  function load() {
+    return api('/state').then(function (r) {
+      if (!r || !r.ok) {
+        notice((r && (r.message || r.error)) || '读取失败');
+        return;
+      }
+      notice('');
+      state = r.state;
+      render();
+    }).catch(function (e) { notice('请求失败：' + (e && e.message ? e.message : e)); });
+  }
+
+  $('master').addEventListener('click', function () {
+    var master = (state && state.modes || []).filter(function (m) { return m.key === 'master'; })[0];
+    set({ action: 'mode', key: 'master', on: !(master && master.on) });
+  });
+  $('refresh').addEventListener('click', function () { load().then(function () { toast('已刷新'); }); });
+  $('busySet').addEventListener('click', function () {
+    busyText = $('busy').value;
+    set({ action: 'busy', text: busyText });
+  });
+  $('busyClear').addEventListener('click', function () {
+    busyText = '';
+    $('busy').value = '';
+    set({ action: 'busy', text: '' });
+  });
+  $('cheer').addEventListener('click', function () { set({ action: 'cheer' }); });
+  $('reset').addEventListener('click', function () { set({ action: 'resetAll' }); });
+
+  load();
+})();
+</script>
+</body>
+</html>

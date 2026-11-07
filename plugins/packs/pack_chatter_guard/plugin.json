@@ -1,0 +1,16 @@
+{
+  "id": "pack_chatter_guard",
+  "name": "水聊免回（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "chatter_guard.py",
+  "permissions": [
+    "read_message"
+  ],
+  "description": "连着发表情包、或者一直说水话的时候，机器人就不接了（连模型都不叫醒，0 token）。只认三类明确的水：纯表情/图片、命中水词表（哈哈、草、6、。。。、笑死…）、同一个字重复或全是标点。**不用「字数太少」当判据**——那会误伤「在吗」「谢谢」「几点」。中间插一句正常话就重新计数。",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": false,
+  "category": "message",
+  "source": "builtin:chatter_guard"
+}

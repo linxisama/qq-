@@ -1,0 +1,16 @@
+{
+  "id": "pack_archive_isolation",
+  "name": "人设存档隔离（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "archive_isolation.py",
+  "permissions": [
+    "store_data"
+  ],
+  "description": "切换人设后分开对话历史与个人记忆，再切回来可继续原有存档；不会删除或搬走用户文件。",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": true,
+  "category": "utility",
+  "source": "builtin:archive_isolation"
+}

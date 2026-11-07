@@ -1,0 +1,16 @@
+{
+  "id": "pack_face_decode",
+  "name": "QQ表情转译（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "face_decode.py",
+  "permissions": [
+    "read_message"
+  ],
+  "description": "把 [表情14] 这类数字占位符翻成 [表情:微笑]，让模型读懂 QQ 内置表情。新消息由传输层直接渲染；本插件兜底历史记录与合并转发里的旧格式。查不到的 id（限时/季节表情）保持原样，不会瞎编名字。",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": true,
+  "category": "utility",
+  "source": "builtin:face_decode"
+}

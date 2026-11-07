@@ -1,0 +1,16 @@
+{
+  "id": "pack_sticker_memory",
+  "name": "表情包识别记忆（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "sticker_memory.py",
+  "permissions": [
+    "store_data"
+  ],
+  "description": "缓存视觉模型成功识别的单张表情含义，按协议图片标识、完整链接或内联图片指纹复用。只记表情模式需要协议提供表情标记或小图尺寸，普通照片不会凭空被当作表情。识别失败不写入；多图消息仍正常识图，避免漏看未缓存的图。",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": true,
+  "category": "media",
+  "source": "builtin:sticker_memory"
+}

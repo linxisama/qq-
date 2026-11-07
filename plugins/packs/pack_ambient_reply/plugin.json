@@ -1,0 +1,16 @@
+{
+  "id": "pack_ambient_reply",
+  "name": "群聊随机接话（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "ambient_reply.py",
+  "permissions": [
+    "read_message"
+  ],
+  "description": "监控群聊，在没人 @ 机器人时按概率偶尔自然接话（像群友一样参与聊天）。带冷却与每小时上限，避免刷屏；只对已监听群生效，不处理命令与通知。",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": true,
+  "category": "social",
+  "source": "builtin:ambient_reply"
+}

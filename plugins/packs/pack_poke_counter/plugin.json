@@ -1,0 +1,17 @@
+{
+  "id": "pack_poke_counter",
+  "name": "戳一戳统计（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "poke_counter.py",
+  "permissions": [
+    "read_message",
+    "store_data"
+  ],
+  "description": "统计每天被戳一戳的次数；被戳时按概率回复预设文本，并对一个数字执行预设运算后播报结果。普通QQ支持真实戳一戳；官方接入用 /戳一戳 指令。/戳一戳统计 查询次数；回复不经模型。",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": false,
+  "category": "utility",
+  "source": "builtin:poke_counter"
+}

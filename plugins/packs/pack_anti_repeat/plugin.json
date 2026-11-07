@@ -1,0 +1,16 @@
+{
+  "id": "pack_anti_repeat",
+  "name": "打断复读（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "anti_repeat.py",
+  "permissions": [
+    "read_message"
+  ],
+  "description": "同一消息被多次触发时，阻止机器人重复回复",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": true,
+  "category": "rhythm",
+  "source": "builtin:anti_repeat"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "pack_reply_guards",
+  "name": "复读接梗（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "reply_guards.py",
+  "permissions": [
+    "read_message"
+  ],
+  "description": "群里出现跟风短句时，提示AI自然融入",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": false,
+  "category": "social",
+  "source": "builtin:reply_guards"
+}

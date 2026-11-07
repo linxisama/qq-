@@ -1,0 +1,16 @@
+{
+  "id": "pack_turn_complete",
+  "name": "对话完成判定（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "turn_complete.py",
+  "permissions": [
+    "read_message"
+  ],
+  "description": "同一个人连着发消息时，别在人家话还没说完的时候插嘴。按内容判定：结尾悬着、落在连接词上、或者只有几个字 → 再多等一会儿；像一句问话、只是在喊人、说得比较长 → 照常回。（移植说明：JS 版靠宿主的唤醒倒计时仲裁，本项目只在当前一轮内延后等待，不会提前回复；多人同时说话时把说话人摘要告诉模型。）",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": false,
+  "category": "message",
+  "source": "builtin:turn_complete"
+}

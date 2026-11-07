@@ -1,0 +1,16 @@
+{
+  "id": "pack_sticker_admin",
+  "name": "表情包管理（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "sticker_admin.py",
+  "permissions": [
+    "read_message"
+  ],
+  "description": "点击“管理表情库”查看缩略图、搜索、上传、修改标签与含义、让AI识图及删除本地收藏。只管理机器人自己的本地库，不同步删除QQ收藏，也不改写核心程序。手动图库仍在“表情包与自定义图库”中配置。",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": true,
+  "category": "media",
+  "source": "builtin:sticker_admin"
+}

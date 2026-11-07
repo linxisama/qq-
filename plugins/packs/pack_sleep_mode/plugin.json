@@ -1,0 +1,16 @@
+{
+  "id": "pack_sleep_mode",
+  "name": "睡眠时段（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "sleep_mode.py",
+  "permissions": [
+    "read_message"
+  ],
+  "description": "在指定时间段内不回复消息",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": false,
+  "category": "rhythm",
+  "source": "builtin:sleep_mode"
+}

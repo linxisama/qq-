@@ -1,0 +1,2920 @@
+{
+  "host_version": "5.2.112",
+  "total": 66,
+  "mod": 32,
+  "override": 34,
+  "builtin": 63,
+  "extra": 3,
+  "patched": [
+    "qqagent_bridge"
+  ],
+  "plugins": [
+    {
+      "id": "addressee_guard",
+      "pack_id": "addressee_guard",
+      "name": "点名判定",
+      "description": "有人提到机器人名字但没有@时，提示AI考虑是否回应",
+      "category": "intelligence",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.config",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [
+        "on_pre_ai"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "enabled"
+      ],
+      "lines": 53,
+      "sha256_source": "24cd76dd739a94ad13c9be707b5afd7378af1d6f411c97f0d6723570443a2392",
+      "sha256_shipped": "24cd76dd739a94ad13c9be707b5afd7378af1d6f411c97f0d6723570443a2392",
+      "blocked_runtime_attrs": [
+        "config"
+      ],
+      "runtime_ref_lines": {
+        "config": [
+          34
+        ]
+      },
+      "files": [
+        "addressee_guard.py"
+      ]
+    },
+    {
+      "id": "affinity",
+      "pack_id": "affinity",
+      "name": "群友好感度",
+      "description": "移植自社区插件 affinity：自动给每个群友累积好感度 —— 发言加分、@机器人加分、接话加分，每人每天有上限防刷屏；长期不发言缓慢衰减；主人恒为满级。等级：陌生/眼熟/熟人/老友/挚友。当前说话人的真实分数与等级会作为\"易变说明\"注入提示词，问到\"你我多熟\"时不会编数字。口令：好感度 / 好感度 排行 [N] / 好感度 重置 [QQ号]（主人）/ 好感度 设置 <键>=<值>（主人），全部零消耗。",
+      "category": "social",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.account/runtime.db/runtime.mode",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_ingest",
+        "on_pre_ai",
+        "on_sent"
+      ],
+      "permissions": [
+        "read_message",
+        "send_message",
+        "store_data"
+      ],
+      "config_keys": [
+        "allowReset",
+        "announceLevelUp",
+        "atBotBonus",
+        "backfillSeconds",
+        "dailyCap",
+        "decayAfterDays",
+        "decayPerDay",
+        "enabled",
+        "levelThresholds",
+        "ownerQq",
+        "ownerScore",
+        "perMessage",
+        "replyBonus",
+        "replyWindowSec",
+        "scanLimit",
+        "topN",
+        "verbose"
+      ],
+      "lines": 482,
+      "sha256_source": "72762c32d1fab0442d54894e779e492359e91fd9fabd549299bb29c4430aed77",
+      "sha256_shipped": "72762c32d1fab0442d54894e779e492359e91fd9fabd549299bb29c4430aed77",
+      "blocked_runtime_attrs": [
+        "account",
+        "db",
+        "mode"
+      ],
+      "runtime_ref_lines": {
+        "account": [
+          314
+        ],
+        "db": [
+          310
+        ],
+        "mode": [
+          314
+        ]
+      },
+      "files": [
+        "affinity.py"
+      ]
+    },
+    {
+      "id": "affinity_proactive",
+      "pack_id": "affinity_proactive",
+      "name": "好感度主动开话题",
+      "description": "按好感度等级排期，到点时按等级概率主动开一句（越高越自然、越不靠频率）。（降级说明：本项目没有好感度技能存档，分数请在「好感度分数」里显式填写；发送走宿主队列并留档；未回复时不继续追问；拿不到未读计数，只能按上次发言时间判断。）",
+      "category": "utility",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.has_plugin_outgoing/runtime.onebot/runtime.queue_plugin_outgoing",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "tick",
+        "on_proactive_sent"
+      ],
+      "permissions": [
+        "send_message",
+        "store_data"
+      ],
+      "config_keys": [
+        "affinityScores",
+        "allowAllWhenEmpty",
+        "allowList",
+        "denyList",
+        "enabled",
+        "guide",
+        "idleMinMs",
+        "maxTokens",
+        "quietEndHour",
+        "quietStartHour",
+        "scanIntervalSec"
+      ],
+      "lines": 426,
+      "sha256_source": "e5a40ada38277ae5adee57b56b9deca44adc8a6b72b2484f535af6316b391664",
+      "sha256_shipped": "e5a40ada38277ae5adee57b56b9deca44adc8a6b72b2484f535af6316b391664",
+      "blocked_runtime_attrs": [
+        "has_plugin_outgoing",
+        "onebot",
+        "queue_plugin_outgoing"
+      ],
+      "runtime_ref_lines": {
+        "has_plugin_outgoing": [
+          372
+        ],
+        "onebot": [
+          413,
+          415
+        ],
+        "queue_plugin_outgoing": [
+          409
+        ]
+      },
+      "files": [
+        "affinity_proactive.py"
+      ]
+    },
+    {
+      "id": "ambient_reply",
+      "pack_id": "pack_ambient_reply",
+      "name": "群聊随机接话",
+      "description": "监控群聊，在没人 @ 机器人时按概率偶尔自然接话（像群友一样参与聊天）。带冷却与每小时上限，避免刷屏；只对已监听群生效，不处理命令与通知。",
+      "category": "social",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [
+        "wants_reply"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "activeHours",
+        "boostQuestion",
+        "cooldownSec",
+        "enabled",
+        "groups",
+        "ignorePrefix",
+        "maxPerHour",
+        "minChars",
+        "percent"
+      ],
+      "lines": 117,
+      "sha256_source": "62fdb9ee1e528cc48be3ee938a21623b9c2b7b53e2806c1c16f6c8d1c86eb961",
+      "sha256_shipped": "62fdb9ee1e528cc48be3ee938a21623b9c2b7b53e2806c1c16f6c8d1c86eb961",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "ambient_reply.py",
+        "plugin.json"
+      ]
+    },
+    {
+      "id": "anti_repeat",
+      "pack_id": "pack_anti_repeat",
+      "name": "打断复读",
+      "description": "同一消息被多次触发时，阻止机器人重复回复",
+      "category": "rhythm",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [
+        "on_block"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "blockWindowSec",
+        "enabled",
+        "maxRepeat"
+      ],
+      "lines": 60,
+      "sha256_source": "e60011f46cf5fd566c5a28a61089e4439cc0b0d37d391a2bfa19b6cc1034b64c",
+      "sha256_shipped": "e60011f46cf5fd566c5a28a61089e4439cc0b0d37d391a2bfa19b6cc1034b64c",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "anti_repeat.py",
+        "plugin.json"
+      ]
+    },
+    {
+      "id": "archive_isolation",
+      "pack_id": "pack_archive_isolation",
+      "name": "人设存档隔离",
+      "description": "切换人设后分开对话历史与个人记忆，再切回来可继续原有存档；不会删除或搬走用户文件。",
+      "category": "utility",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [],
+      "permissions": [
+        "store_data"
+      ],
+      "config_keys": [
+        "enabled",
+        "protectKeys"
+      ],
+      "lines": 23,
+      "sha256_source": "3cf2793fa79a20d093e32c31d1284ef87215bb4d0aca1c6e9148704f06e42ac0",
+      "sha256_shipped": "3cf2793fa79a20d093e32c31d1284ef87215bb4d0aca1c6e9148704f06e42ac0",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "archive_isolation.py",
+        "plugin.json"
+      ]
+    },
+    {
+      "id": "at_mention",
+      "pack_id": "pack_at_mention",
+      "name": "@群友（按名字）",
+      "description": "让机器人用名字 @ 群友：它在正文里写「@泡影之梦 你说得对」时，这里把名字认领成真正的 QQ @ 提醒（对方会收到红点），而不是一串没人看得到的普通字符。支持一次 @ 多人。认不出名字就按原样发送，绝不猜——猜错会 @ 到无关的人。（降级说明：群成员名单靠观察最近说过话的人累积，没说过话的人认不出来。）",
+      "category": "message",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_ingest",
+        "on_block",
+        "on_pre_ai",
+        "on_post_reply"
+      ],
+      "permissions": [
+        "read_message",
+        "send_message"
+      ],
+      "config_keys": [
+        "allowPartialMatch",
+        "debug",
+        "enabled",
+        "maxMentions"
+      ],
+      "lines": 105,
+      "sha256_source": "14e0528c6428074a66ca75f5462082a8516d41e744ae6ac6d0a0fb824dadf4ac",
+      "sha256_shipped": "14e0528c6428074a66ca75f5462082a8516d41e744ae6ac6d0a0fb824dadf4ac",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "at_mention.py",
+        "plugin.json"
+      ]
+    },
+    {
+      "id": "audio_assets_config",
+      "pack_id": "pack_audio_assets_config",
+      "name": "音频素材与路由",
+      "description": "配置 TTS 引擎路由、参考/歌曲素材（原生上传入口）与数据去向。云出网、自动语音、电脑控制默认关闭；上传文件复制到运行数据目录后使用。",
+      "category": "voice",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": false,
+      "enabled_by_default": false,
+      "hooks": [
+        "validate_settings"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "allowOutbound",
+        "assetDir",
+        "cloudModel",
+        "cloudVoice",
+        "enabled",
+        "engine",
+        "refAudio",
+        "routePolicy",
+        "songFiles",
+        "voiceSamples",
+        "voiceTable"
+      ],
+      "lines": 74,
+      "sha256_source": "728f8f7afa33024f5366309b597037ca54b587a7f96d740809a870fc3a40ee62",
+      "sha256_shipped": "728f8f7afa33024f5366309b597037ca54b587a7f96d740809a870fc3a40ee62",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "audio_assets_config.py",
+        "plugin.json"
+      ]
+    },
+    {
+      "id": "burst_merge",
+      "pack_id": "pack_burst_merge",
+      "name": "连发合并",
+      "description": "同一人在短时间内连续发消息时，等他发完再一起回复。被 @ 或被叫昵称时**不等待**、立刻回；其余情况对方静默 quietMs（默认 0.6 秒）就开口，最长不超过合并窗口 capMs。",
+      "category": "rhythm",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [
+        "on_pre_ai"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "capMs",
+        "enabled",
+        "quietMs"
+      ],
+      "lines": 65,
+      "sha256_source": "38ffd7a6b91be3d988e345a7c01b60986ef4a21a9b1836a2b704fb9f428124d3",
+      "sha256_shipped": "38ffd7a6b91be3d988e345a7c01b60986ef4a21a9b1836a2b704fb9f428124d3",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "burst_merge.py",
+        "plugin.json"
+      ]
+    },
+    {
+      "id": "cache_stability",
+      "pack_id": "cache_stability",
+      "name": "缓存稳定性",
+      "description": "移植自社区插件 cache-stability。把\"每轮都会变\"的说明排到系统提示词最后，让发送前缀尽量逐字节相同 —— 服务商按前缀缓存计费，命中部分便宜一个数量级。同时把真实的缓存命中 token 记进运行记录，并在稳定前缀发生变化（改了人设或稳定说明）时提醒你\"缓存会重新预热\"。关掉它就回到原来的顺序，行为与未安装时一致。",
+      "category": "utility",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.style",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_pre_ai",
+        "on_sent"
+      ],
+      "permissions": [
+        "read_message",
+        "send_message",
+        "store_data"
+      ],
+      "config_keys": [
+        "enabled",
+        "reportEvery",
+        "stableOrder",
+        "verbose"
+      ],
+      "lines": 126,
+      "sha256_source": "5a5265dcb5d2303b93025429a4cfdfcb62810e5d1da16fbb5094f6880f26e8ac",
+      "sha256_shipped": "5a5265dcb5d2303b93025429a4cfdfcb62810e5d1da16fbb5094f6880f26e8ac",
+      "blocked_runtime_attrs": [
+        "style"
+      ],
+      "runtime_ref_lines": {
+        "style": [
+          101
+        ]
+      },
+      "files": [
+        "cache_stability.py"
+      ]
+    },
+    {
+      "id": "chat_controls",
+      "pack_id": "chat_controls",
+      "name": "群聊上下文与回复控制",
+      "description": "按昵称或 @ 触发，引用近期群聊背景；支持低概率插话、会话限流、上下文预算与同一接口备用模型。插话默认关闭，换人设后旧对话不再影响新角色。",
+      "category": "rhythm",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.account/runtime.db/runtime.mode；调用了宿主 chat_state.scope_of()，它内部读 runtime.mode / runtime.account() / runtime.plugins",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [
+        "on_pre_ai"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "aliases",
+        "ambient",
+        "blockedGroups",
+        "blockedUsers",
+        "contextChars",
+        "cooldownSeconds",
+        "enabled",
+        "errorFeedback",
+        "fallbackModels",
+        "historyTurns",
+        "interjectPercent",
+        "ordinaryPercent",
+        "perMinute",
+        "requireAt"
+      ],
+      "lines": 91,
+      "sha256_source": "93ba55c7ebcb6feb44a4ae2a7a620cfa926568d2687b8c429ae6c8181476e6fe",
+      "sha256_shipped": "93ba55c7ebcb6feb44a4ae2a7a620cfa926568d2687b8c429ae6c8181476e6fe",
+      "blocked_runtime_attrs": [
+        "account",
+        "db",
+        "mode"
+      ],
+      "runtime_ref_lines": {
+        "account": [
+          55
+        ],
+        "db": [
+          53
+        ],
+        "mode": [
+          55
+        ]
+      },
+      "files": [
+        "chat_controls.py"
+      ]
+    },
+    {
+      "id": "chatter_guard",
+      "pack_id": "pack_chatter_guard",
+      "name": "水聊免回",
+      "description": "连着发表情包、或者一直说水话的时候，机器人就不接了（连模型都不叫醒，0 token）。只认三类明确的水：纯表情/图片、命中水词表（哈哈、草、6、。。。、笑死…）、同一个字重复或全是标点。**不用「字数太少」当判据**——那会误伤「在吗」「谢谢」「几点」。中间插一句正常话就重新计数。",
+      "category": "message",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_block"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "alwaysReplyWhenAtMe",
+        "enabled",
+        "exemptKeyword",
+        "fillerWords",
+        "skipFiller",
+        "skipMedia",
+        "threshold",
+        "windowSec"
+      ],
+      "lines": 215,
+      "sha256_source": "57c52db22a3516444701030ad83ba6c862755646cdcfc549669344597d73fade",
+      "sha256_shipped": "57c52db22a3516444701030ad83ba6c862755646cdcfc549669344597d73fade",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "chatter_guard.py",
+        "plugin.json"
+      ]
+    },
+    {
+      "id": "context_chime",
+      "pack_id": "pack_context_chime",
+      "name": "上下文插话判定",
+      "description": "用一次极短的模型调用判断「这条消息值不值得主动接话」。⚠️ 机制差异：原版在调模型之前判定，判「不接」= 0 token；本项目只能在 AI 调用前（同步钩子）里用独立事件循环发判定请求，判「不接」是拦住回复，**省不下已经花掉的 token**。判定失败默认按「不接」处理（与原版一致，保守侧）。",
+      "category": "message",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_pre_ai",
+        "on_pre_ai_async"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "allowPrivate",
+        "blockOnJudgeFailure",
+        "blockOnTimeout",
+        "confidenceThreshold",
+        "cooldownSec",
+        "dailyCallLimit",
+        "denyGroups",
+        "enabled",
+        "judgeModel",
+        "judgeProbability",
+        "maxTokens",
+        "minChars",
+        "onlyGroups",
+        "promptExtra",
+        "timeoutMs",
+        "windowSize"
+      ],
+      "lines": 487,
+      "sha256_source": "78e3ba2e4e6a9ba961bb7e90beaee361311e3c8a5c224f7ff9b549e172901ab1",
+      "sha256_shipped": "78e3ba2e4e6a9ba961bb7e90beaee361311e3c8a5c224f7ff9b549e172901ab1",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "context_chime.py",
+        "plugin.json"
+      ]
+    },
+    {
+      "id": "conversation_memory",
+      "pack_id": "conversation_memory",
+      "name": "长期记忆与群友档案",
+      "description": "记住个人事实与偏好，按会话和发送者隔离。/记住 内容、/记忆 关键词、/忘记 关键词、/我的印象、/群友。自动观察需两次独立消息复证，不能凭模型猜测写入。",
+      "category": "utility",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.db；调用了宿主 chat_state.scope_of()，它内部读 runtime.mode / runtime.account() / runtime.plugins",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [
+        "on_ingest",
+        "on_pre_ai"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "autoRemember",
+        "enabled",
+        "maxEntries",
+        "recallLimit"
+      ],
+      "lines": 118,
+      "sha256_source": "5eef1e0e129074855dc0cbd1984cf3148050d1954745329e1e06b07c6e39297e",
+      "sha256_shipped": "5eef1e0e129074855dc0cbd1984cf3148050d1954745329e1e06b07c6e39297e",
+      "blocked_runtime_attrs": [
+        "db"
+      ],
+      "runtime_ref_lines": {
+        "db": [
+          108
+        ]
+      },
+      "files": [
+        "conversation_memory.py"
+      ]
+    },
+    {
+      "id": "cross_chat_link",
+      "pack_id": "cross_chat_link",
+      "name": "跨会话认人",
+      "description": "同一稳定用户标识的已确认偏好可用于其他会话；默认禁止把私聊记忆带入群聊。官方 QQ 不同场景标识不一致时不会猜测身份。",
+      "category": "social",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.account/runtime.db/runtime.mode；调用了宿主 chat_state.scope_of()，它内部读 runtime.mode / runtime.account() / runtime.plugins",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [
+        "on_pre_ai"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "enabled",
+        "maxImpressions",
+        "privateToGroup"
+      ],
+      "lines": 24,
+      "sha256_source": "61d5acb509d9beb2e80c156c4f0849b715e892d008ca8f20c872f99df736e006",
+      "sha256_shipped": "61d5acb509d9beb2e80c156c4f0849b715e892d008ca8f20c872f99df736e006",
+      "blocked_runtime_attrs": [
+        "account",
+        "db",
+        "mode"
+      ],
+      "runtime_ref_lines": {
+        "account": [
+          14
+        ],
+        "db": [
+          16
+        ],
+        "mode": [
+          14
+        ]
+      },
+      "files": [
+        "cross_chat_link.py"
+      ]
+    },
+    {
+      "id": "early_finish",
+      "pack_id": "pack_early_finish",
+      "name": "提前收尾（省 token）",
+      "description": "移植自 JS 插件 early-finish。已交付完毕、没有遗留动作的这一轮，不再为可选的锦上添花动作多花一次模型调用：跳过“该不该接话”的判定调用和“让 AI 选表情”的选择调用。有工具失败、结尾是“我去看看”这类预告、或预告要交图却没交时，一律按正常流程走。不碰提示词、不改人设、不拦发言；“试运行”只记日志不真的省。",
+      "category": "utility",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_sent"
+      ],
+      "permissions": [
+        "send_message"
+      ],
+      "config_keys": [
+        "dryRun",
+        "enabled",
+        "skipAiReaction",
+        "skipJudge",
+        "windowSec"
+      ],
+      "lines": 174,
+      "sha256_source": "ed26b118798537b10ab9d98ec199687ca7394c8f26a0b636f24e852323dc2fa2",
+      "sha256_shipped": "ed26b118798537b10ab9d98ec199687ca7394c8f26a0b636f24e852323dc2fa2",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "early_finish.py",
+        "plugin.json"
+      ]
+    },
+    {
+      "id": "emoji_echo",
+      "pack_id": "emoji_echo",
+      "name": "跟着贴表情",
+      "description": "普通QQ/OneBot专用：群友给消息贴表情回应时，跟贴同一条消息的同一个表情，全程不调用模型、不发文字。当前官方QQ群聊接入不支持此动作，会保持不执行；图片表情不受影响。",
+      "category": "social",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.account/runtime.mode/runtime.onebot/runtime.running；钩子里 await sleep，超过目录 mod 的 2 秒围栏就会被整钩子跳过",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [],
+      "permissions": [
+        "store_data"
+      ],
+      "config_keys": [
+        "delayMs",
+        "emojiBlacklist",
+        "enabled",
+        "followRemove",
+        "groupWhitelist",
+        "maxPerMinute",
+        "minIntervalMs"
+      ],
+      "lines": 54,
+      "sha256_source": "ee3729811b85bf9f2fff76a5a1e8332e95539250821ce6580bcdbe92feba8641",
+      "sha256_shipped": "ee3729811b85bf9f2fff76a5a1e8332e95539250821ce6580bcdbe92feba8641",
+      "blocked_runtime_attrs": [
+        "account",
+        "mode",
+        "onebot",
+        "running"
+      ],
+      "runtime_ref_lines": {
+        "account": [
+          36
+        ],
+        "mode": [
+          26
+        ],
+        "onebot": [
+          28,
+          48
+        ],
+        "running": [
+          46
+        ]
+      },
+      "files": [
+        "emoji_echo.py"
+      ]
+    },
+    {
+      "id": "emotion_state",
+      "pack_id": "pack_emotion_state",
+      "name": "鲸鱼娘情绪与精力",
+      "description": "维护角色的心情、精力和压力，随时间恢复；只在消息发送成功后更新。/状态 可查看当前角色状态。",
+      "category": "social",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [
+        "on_ingest",
+        "on_pre_ai",
+        "on_sent"
+      ],
+      "permissions": [
+        "read_message",
+        "send_message",
+        "store_data"
+      ],
+      "config_keys": [
+        "autoUpdate",
+        "enabled",
+        "injectPrompt"
+      ],
+      "lines": 58,
+      "sha256_source": "b1db729bd2c0daec7590b9ff845254c40f27aebd28038665777bebd9c208501d",
+      "sha256_shipped": "b1db729bd2c0daec7590b9ff845254c40f27aebd28038665777bebd9c208501d",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "emotion_state.py",
+        "plugin.json"
+      ]
+    },
+    {
+      "id": "face_decode",
+      "pack_id": "pack_face_decode",
+      "name": "QQ表情转译",
+      "description": "把 [表情14] 这类数字占位符翻成 [表情:微笑]，让模型读懂 QQ 内置表情。新消息由传输层直接渲染；本插件兜底历史记录与合并转发里的旧格式。查不到的 id（限时/季节表情）保持原样，不会瞎编名字。",
+      "category": "utility",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [
+        "on_pre_ai"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "enabled",
+        "includeAssistant",
+        "userOnly"
+      ],
+      "lines": 133,
+      "sha256_source": "57044b94a46eb54d616984ff717e9eacaf8caf4367430dab770875ba6a7c62d4",
+      "sha256_shipped": "57044b94a46eb54d616984ff717e9eacaf8caf4367430dab770875ba6a7c62d4",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "face_decode.py",
+        "plugin.json"
+      ]
+    },
+    {
+      "id": "forward_summary",
+      "pack_id": "forward_summary",
+      "name": "合并转发阅读与总结",
+      "description": "普通QQ可读取转发ID的节点，并以限定长度的参考文本交给聊天模型阅读或总结；也支持消息内附带节点。转发图片可由视觉模型读取，截图文字可随长图分段识别；不依赖本地 OCR。",
+      "category": "media",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.mode",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [
+        "on_prepare",
+        "on_pre_ai"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "adultFilter",
+        "enabled",
+        "maxChars",
+        "maxImages",
+        "maxNodes",
+        "maxOcrChars",
+        "maxOcrImages",
+        "ocrFirst",
+        "singleScreenshots",
+        "summaryChars"
+      ],
+      "lines": 390,
+      "sha256_source": "eeb996c833ba7c4f9405e4e5bfd56de23bf4ac7f623ff24e139b7a3ce919b360",
+      "sha256_shipped": "eeb996c833ba7c4f9405e4e5bfd56de23bf4ac7f623ff24e139b7a3ce919b360",
+      "blocked_runtime_attrs": [
+        "mode"
+      ],
+      "runtime_ref_lines": {
+        "mode": [
+          277,
+          278
+        ]
+      },
+      "files": [
+        "forward_summary.py"
+      ]
+    },
+    {
+      "id": "group_cost_report",
+      "pack_id": "group_cost_report",
+      "name": "群友花费统计",
+      "description": "移植自社区插件 group-cost-report：群里 @机器人 说「金额统计」（可跟区间：昨天 / 本周 / 上月 / 最近7天 / 9月1日到9月30日 / 全部…），就把这段时间本群的 token 用量按**触发这次运行的人**逐人列出来。规则触发、立即回复，**不经过模型、零消耗**。填了单价（元/百万 token）才折算金额，没填就只报 token。",
+      "category": "utility",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.account/runtime.db/runtime.mode",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_ingest"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "allowWithoutAt",
+        "defaultRange",
+        "enabled",
+        "footer",
+        "maxRows",
+        "priceIn",
+        "priceOut",
+        "topN",
+        "triggerWords"
+      ],
+      "lines": 268,
+      "sha256_source": "ef0102c75487b6f873f2ff6c71fe34d7f8041d0fbeaa0a031fd1188418f7fb9e",
+      "sha256_shipped": "ef0102c75487b6f873f2ff6c71fe34d7f8041d0fbeaa0a031fd1188418f7fb9e",
+      "blocked_runtime_attrs": [
+        "account",
+        "db",
+        "mode"
+      ],
+      "runtime_ref_lines": {
+        "account": [
+          260
+        ],
+        "db": [
+          256
+        ],
+        "mode": [
+          260
+        ]
+      },
+      "files": [
+        "group_cost_report.py"
+      ]
+    },
+    {
+      "id": "hot_trend_tracker",
+      "pack_id": "hot_trend_tracker",
+      "name": "热梗与热点收集",
+      "description": "每日北京时间6点后采集公开热点，保存来源及时间；/热点 查看缓存，谈到热搜或热梗时提供参考。失败保留有效旧记录并显示更新时间。",
+      "category": "utility",
+      "channel": "override",
+      "channel_reason": "钩子里联网读网页，单次超时预算可达 4~6 秒，超过目录 mod 的 2 秒围栏",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [
+        "tick",
+        "on_ingest",
+        "on_prepare",
+        "on_pre_ai"
+      ],
+      "permissions": [
+        "read_message",
+        "send_message",
+        "store_data",
+        "network"
+      ],
+      "config_keys": [
+        "enabled",
+        "keepDays",
+        "sourceBaidu",
+        "sourceBilibili",
+        "sourceTieba"
+      ],
+      "lines": 71,
+      "sha256_source": "b82ab6fb13e2d49c549b013f790882b3f4d514545c94b8332376b2a2e0bbb088",
+      "sha256_shipped": "b82ab6fb13e2d49c549b013f790882b3f4d514545c94b8332376b2a2e0bbb088",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "hot_trend_tracker.py"
+      ]
+    },
+    {
+      "id": "icebreaker",
+      "pack_id": "icebreaker",
+      "name": "定时暖场",
+      "description": "在睡觉时间（默认 23:30~08:00）之外，每隔几小时自动往指定会话发一条符合当前人设的暖场消息；消息由模型现场生成，每个会话各自随机间隔（不会几个群同时被刷）。留空目标时尝试用最近的活跃会话；拿不到活跃数据就必须显式填目标。",
+      "category": "utility",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.ai_lock/runtime.can_send_proactive/runtime.has_plugin_outgoing/runtime.last_interaction/runtime.onebot/runtime.queue_plugin_outgoing/runtime.recent_chats/runtime.style",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "tick",
+        "on_proactive_sent"
+      ],
+      "permissions": [
+        "send_message",
+        "store_data"
+      ],
+      "config_keys": [
+        "chats",
+        "dryRun",
+        "enabled",
+        "guide",
+        "intervalMaxHours",
+        "intervalMinHours",
+        "maxChatsPerRound",
+        "maxLength",
+        "minIdleMinutes",
+        "quietEnd",
+        "quietStart",
+        "temperature"
+      ],
+      "lines": 356,
+      "sha256_source": "b9f08fdb556c99aef76c8ef33f8dbcc1dba19b06a147dd16a5583c16f6188b10",
+      "sha256_shipped": "b9f08fdb556c99aef76c8ef33f8dbcc1dba19b06a147dd16a5583c16f6188b10",
+      "blocked_runtime_attrs": [
+        "ai_lock",
+        "can_send_proactive",
+        "has_plugin_outgoing",
+        "last_interaction",
+        "onebot",
+        "queue_plugin_outgoing",
+        "recent_chats",
+        "style"
+      ],
+      "runtime_ref_lines": {
+        "ai_lock": [
+          329
+        ],
+        "can_send_proactive": [
+          320
+        ],
+        "has_plugin_outgoing": [
+          320
+        ],
+        "last_interaction": [
+          266,
+          318,
+          338
+        ],
+        "onebot": [
+          349,
+          351
+        ],
+        "queue_plugin_outgoing": [
+          345
+        ],
+        "recent_chats": [
+          248
+        ],
+        "style": [
+          326
+        ]
+      },
+      "files": [
+        "icebreaker.py"
+      ]
+    },
+    {
+      "id": "image_library",
+      "pack_id": "image_library",
+      "name": "表情包与自定义图库",
+      "description": "上传图片并保存后，用 /表情 标签 发送；聊天模型也可按语境选择已登记图片。官方QQ与普通QQ均支持本机图片及公开链接。空图库不会猜图或复述收到的图片。",
+      "category": "media",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.mode",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [
+        "validate_settings",
+        "on_ingest",
+        "on_pre_ai",
+        "on_sent",
+        "on_post_reply"
+      ],
+      "permissions": [
+        "read_message",
+        "send_message"
+      ],
+      "config_keys": [
+        "asSticker",
+        "autoSelect",
+        "enabled",
+        "library",
+        "separateMessages"
+      ],
+      "lines": 167,
+      "sha256_source": "2950229aca3080dbe7462bff131c5434d8292a76e87b2f7067f521b935b87859",
+      "sha256_shipped": "2950229aca3080dbe7462bff131c5434d8292a76e87b2f7067f521b935b87859",
+      "blocked_runtime_attrs": [
+        "mode"
+      ],
+      "runtime_ref_lines": {
+        "mode": [
+          76,
+          87
+        ]
+      },
+      "files": [
+        "image_library.py"
+      ]
+    },
+    {
+      "id": "image_understanding",
+      "pack_id": "image_understanding",
+      "name": "图片与表情包识别",
+      "description": "把收到的图片或表情包送给视觉模型识别，再由聊天模型按现有人设回复。每条图片消息增加一次识图调用；沿用现有 API 地址与密钥。DeepSeek 官方接口自动使用 deepseek-flash，其他接口需支持图片输入。仅识别收到的图片，不提供发送表情包能力。",
+      "category": "utility",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.ai/runtime.bridge/runtime.mode/runtime.onebot",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [],
+      "permissions": [
+        "network"
+      ],
+      "config_keys": [
+        "enabled",
+        "maxImages",
+        "timeoutSec",
+        "visionModel"
+      ],
+      "lines": 177,
+      "sha256_source": "5201b40ed1578ccd68d9d6c603494289cd3c02d2308a4dad6fae4a2c39aac0c0",
+      "sha256_shipped": "5201b40ed1578ccd68d9d6c603494289cd3c02d2308a4dad6fae4a2c39aac0c0",
+      "blocked_runtime_attrs": [
+        "ai",
+        "bridge",
+        "mode",
+        "onebot"
+      ],
+      "runtime_ref_lines": {
+        "ai": [
+          142,
+          70,
+          145,
+          141,
+          154,
+          95
+        ],
+        "bridge": [
+          41,
+          128
+        ],
+        "mode": [
+          38,
+          73,
+          41,
+          126,
+          128
+        ],
+        "onebot": [
+          41,
+          128
+        ]
+      },
+      "files": [
+        "image_understanding.py"
+      ]
+    },
+    {
+      "id": "keyword_reply",
+      "pack_id": "pack_keyword_reply",
+      "name": "关键词自动回复",
+      "description": "消息包含关键词时直接返回预设回复，不经过AI",
+      "category": "utility",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "validate_settings",
+        "on_ingest"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "enabled",
+        "rules"
+      ],
+      "lines": 47,
+      "sha256_source": "7e15f3a1a915d7a1e8d624c6471e4213a559ad70e5594bfc781ea8ea3e239028",
+      "sha256_shipped": "7e15f3a1a915d7a1e8d624c6471e4213a559ad70e5594bfc781ea8ea3e239028",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "keyword_reply.py",
+        "plugin.json"
+      ]
+    },
+    {
+      "id": "local_agent_control",
+      "pack_id": "pack_local_agent_control",
+      "name": "本地电脑操作",
+      "description": "主人私聊“电脑 状态/能力/打开X/音量N/暂停媒体”生成动作提案，在本地控制台批准后由 Windows Agent 执行（首版 L0/L1）。群聊/引用不触发；审批绑定参数；结果只回原私聊。",
+      "category": "agent",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": false,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_ingest"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "devices",
+        "emergencyStop",
+        "enabled",
+        "ownerIds"
+      ],
+      "lines": 156,
+      "sha256_source": "570fd5888d144a65652f6c86ea61e8ed55225a6439a70bb0118ac64326b2daa6",
+      "sha256_shipped": "570fd5888d144a65652f6c86ea61e8ed55225a6439a70bb0118ac64326b2daa6",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "local_agent_control.py",
+        "plugin.json"
+      ]
+    },
+    {
+      "id": "long_image_reader",
+      "pack_id": "long_image_reader",
+      "name": "长图分段阅读",
+      "description": "长截图按从上到下分段并留重叠区，由现有视觉模型读取；超出预算或某段失败会明确标注未读。",
+      "category": "media",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.ai/runtime.bridge/runtime.mode/runtime.onebot",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [],
+      "permissions": [
+        "network"
+      ],
+      "config_keys": [
+        "enabled",
+        "maxTiles"
+      ],
+      "lines": 78,
+      "sha256_source": "445357294effd3cf01db31f1926f9f0ee17a141c093b1fc17c00c3aabcba874f",
+      "sha256_shipped": "445357294effd3cf01db31f1926f9f0ee17a141c093b1fc17c00c3aabcba874f",
+      "blocked_runtime_attrs": [
+        "ai",
+        "bridge",
+        "mode",
+        "onebot"
+      ],
+      "runtime_ref_lines": {
+        "ai": [
+          67
+        ],
+        "bridge": [
+          54
+        ],
+        "mode": [
+          53,
+          54
+        ],
+        "onebot": [
+          54
+        ]
+      },
+      "files": [
+        "long_image_reader.py"
+      ]
+    },
+    {
+      "id": "market_probe",
+      "pack_id": "market_probe",
+      "name": "市场探针",
+      "description": "抓取插件市场目录并按关键词筛出相关插件，结果只展示、不自动安装。默认指向 QQ Agent 社区市场（kondius.cn/api/community/plugins），清单里会标出哪些本项目已经移植过、哪些评估过但不适用；也支持通用 JSON 目录（{\"plugins\":[{name,url,description,tags}]}）与常见 HTML 目录页。管理员在 QQ 私聊里发“市场 [关键词]”，或在管理员模式下直接发“市场”。",
+      "category": "utility",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.plugins；钩子里联网读网页，单次超时预算可达 4~6 秒，超过目录 mod 的 2 秒围栏",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_ingest"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "enabled",
+        "keywords",
+        "marketUrl",
+        "maxItems",
+        "timeoutSec"
+      ],
+      "lines": 282,
+      "sha256_source": "1542f602113b0ebc305c987212d1e318498ab08bc23b4e1b29e586e1cb556438",
+      "sha256_shipped": "1542f602113b0ebc305c987212d1e318498ab08bc23b4e1b29e586e1cb556438",
+      "blocked_runtime_attrs": [
+        "plugins"
+      ],
+      "runtime_ref_lines": {
+        "plugins": [
+          261
+        ]
+      },
+      "files": [
+        "market_probe.py"
+      ]
+    },
+    {
+      "id": "member_aliases",
+      "pack_id": "pack_member_aliases",
+      "name": "群友外号对照",
+      "description": "移植自社区插件 member-aliases：谁在说话就告诉模型这人还叫什么；消息里出现某人的外号时，告诉模型指的是谁 —— 命中才加几行，没命中一个字不加。外号表可用口令维护：外号 / 外号 加 <QQ号> <外号> / 外号 删 <QQ号> <外号>（管理员或主人）；可选自动从\"我叫X\"里学（默认关）。",
+      "category": "knowledge",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_pre_ai",
+        "on_ingest"
+      ],
+      "permissions": [
+        "read_message",
+        "store_data"
+      ],
+      "config_keys": [
+        "autoLearn",
+        "enabled",
+        "maxLines",
+        "scanMentions",
+        "verbose"
+      ],
+      "lines": 243,
+      "sha256_source": "ef475a2bca83fcbda666947c530d460ddca7e4e2830fe51376d8a8ad79bd9c8d",
+      "sha256_shipped": "ef475a2bca83fcbda666947c530d460ddca7e4e2830fe51376d8a8ad79bd9c8d",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "member_aliases.py",
+        "plugin.json"
+      ]
+    },
+    {
+      "id": "memes",
+      "pack_id": "memes",
+      "name": "表情包制作（NoneBot 适配）",
+      "description": "基于你提供的 nonebot-plugin-memes 0.8.1 和 meme-generator 0.2.3，支持300种模板、搜索/详情/预览、图片加字与GIF、本地制作和成功发送统计。群聊先@；图片在本机处理。首次使用有素材的模板会按需下载官方素材。",
+      "category": "media",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.bridge/runtime.mode/runtime.onebot",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [
+        "on_prepare",
+        "on_sent"
+      ],
+      "permissions": [
+        "read_message",
+        "send_message",
+        "store_data"
+      ],
+      "config_keys": [
+        "cooldownSec",
+        "defaultTexts",
+        "directKeywords",
+        "disabledTemplates",
+        "downloadResources",
+        "enabled",
+        "maxImages"
+      ],
+      "lines": 154,
+      "sha256_source": "e2233b2fad8b9c31afc4bcea89e274d74bd562a875d1c18de963fa5616e3c0a3",
+      "sha256_shipped": "e2233b2fad8b9c31afc4bcea89e274d74bd562a875d1c18de963fa5616e3c0a3",
+      "blocked_runtime_attrs": [
+        "bridge",
+        "mode",
+        "onebot"
+      ],
+      "runtime_ref_lines": {
+        "bridge": [
+          127
+        ],
+        "mode": [
+          110,
+          126,
+          127
+        ],
+        "onebot": [
+          127
+        ]
+      },
+      "files": [
+        "memes.py"
+      ]
+    },
+    {
+      "id": "mention_gate",
+      "pack_id": "pack_mention_gate",
+      "name": "点名闸门",
+      "description": "给机器人加一道点名闸门：① 名单里的群只在被 @ 或戳一戳时才开口（其余消息不调模型）；② 精确到某个群的某个人（名单外的人照常回复）；③ 名单之外的群可以完全不受影响，也可以谁叫都不理。@ 按 QQ 号判定，重名不会误判。",
+      "category": "message",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [
+        "post_load",
+        "on_block",
+        "on_pre_ai"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "enabled",
+        "group_ids",
+        "mode",
+        "prompt_note",
+        "user_rules"
+      ],
+      "lines": 289,
+      "sha256_source": "249b9ed9018aa0efabb764c81288e2ecdf9fb47dbed4b52a8ae99f2b2e6bb044",
+      "sha256_shipped": "249b9ed9018aa0efabb764c81288e2ecdf9fb47dbed4b52a8ae99f2b2e6bb044",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "mention_gate.py",
+        "plugin.json"
+      ]
+    },
+    {
+      "id": "mention_nudge_guard",
+      "pack_id": "pack_mention_nudge_guard",
+      "name": "重复艾特忽略",
+      "description": "同一人短时间内多次@时，提示机器人冷静应对",
+      "category": "rhythm",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [
+        "on_pre_ai"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "enabled",
+        "maxMentions",
+        "windowSec"
+      ],
+      "lines": 59,
+      "sha256_source": "50b7067b39aff873398e092dc4c5cf0567c77ff8d032194f04328720e9dc9e1a",
+      "sha256_shipped": "50b7067b39aff873398e092dc4c5cf0567c77ff8d032194f04328720e9dc9e1a",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "mention_nudge_guard.py",
+        "plugin.json"
+      ]
+    },
+    {
+      "id": "minimal_mode",
+      "pack_id": "minimal_mode",
+      "name": "极简模式（省 token）",
+      "description": "移植自社区插件 minimal-mode。按档位砍掉每轮都要重发的聊天记录、给输出封顶、并追加一小段\"说短话\"的纪律：极简 / 极限 / 敢死三档，越往后越省、越不像人。管理员私聊发「/极简 开 / 关 / 极限 / 敢死」即可切换（不经过模型，零消耗），「/极简」看状态。关掉立刻恢复原样。",
+      "category": "utility",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.plugins",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_pre_ai",
+        "on_ingest"
+      ],
+      "permissions": [
+        "read_message",
+        "store_data"
+      ],
+      "config_keys": [
+        "enabled",
+        "kamikazeMaxTokens",
+        "minimalMaxTokens",
+        "minimalMsgs",
+        "ownerIds",
+        "tier",
+        "ultraMaxTokens",
+        "ultraMsgs",
+        "verbose"
+      ],
+      "lines": 229,
+      "sha256_source": "e81d944cfc0c81e8d66bc42160c7ddf3163f403707a28c29cd0a9184f99da961",
+      "sha256_shipped": "e81d944cfc0c81e8d66bc42160c7ddf3163f403707a28c29cd0a9184f99da961",
+      "blocked_runtime_attrs": [
+        "plugins"
+      ],
+      "runtime_ref_lines": {
+        "plugins": [
+          189
+        ]
+      },
+      "files": [
+        "minimal_mode.py"
+      ]
+    },
+    {
+      "id": "msg_reaction",
+      "pack_id": "msg_reaction",
+      "name": "消息表情回应",
+      "description": "普通QQ群聊专用：/贴表情 128077 或“给我点个赞”可给消息气泡贴反应；可按概率自动贴，支持AI选表情及随机模式、冷却和小时/每日上限。官方QQ群聊当前不执行此动作，会明确说明。",
+      "category": "social",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.ai/runtime.ai_lock/runtime.mode/runtime.onebot/runtime.running",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "validate_settings",
+        "on_ingest",
+        "on_sent"
+      ],
+      "permissions": [
+        "read_message",
+        "send_message",
+        "store_data"
+      ],
+      "config_keys": [
+        "delaySec",
+        "emojiIds",
+        "enabled",
+        "maxPerDay",
+        "maxPerHour",
+        "minGapSec",
+        "mode",
+        "probabilityPercent",
+        "target"
+      ],
+      "lines": 97,
+      "sha256_source": "44a0aa9b85d80bd55b02c82c9d88e38b811d9253f7ee106d584080e3b9a34d6d",
+      "sha256_shipped": "44a0aa9b85d80bd55b02c82c9d88e38b811d9253f7ee106d584080e3b9a34d6d",
+      "blocked_runtime_attrs": [
+        "ai",
+        "ai_lock",
+        "mode",
+        "onebot",
+        "running"
+      ],
+      "runtime_ref_lines": {
+        "ai": [
+          86
+        ],
+        "ai_lock": [
+          85
+        ],
+        "mode": [
+          45,
+          61,
+          72,
+          76
+        ],
+        "onebot": [
+          54,
+          93
+        ],
+        "running": [
+          72,
+          76
+        ]
+      },
+      "files": [
+        "msg_reaction.py"
+      ]
+    },
+    {
+      "id": "pc_control",
+      "pack_id": "pc_control",
+      "name": "机器人控制台管理",
+      "description": "管理员私聊发送“机器人 状态/连接/队列/日志/人设/插件”直接查询；暂停、恢复回复和重连 QQ 走本地审核。也可以私聊“进入管理员模式”，输入在控制台设置的管理员密码后，在会话有效期内直接执行管理操作（状态、回复记录、换人设、开关插件、暂停/恢复、重连、重试失败），每一步都记录在控制台。只管理机器人本身，不操作宿主机器。",
+      "category": "utility",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.account/runtime.ai/runtime.config/runtime.db/runtime.mode/runtime.pc/runtime.plugins/runtime.set_persona/runtime.style",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_ingest",
+        "on_sent"
+      ],
+      "permissions": [
+        "read_message",
+        "send_message"
+      ],
+      "config_keys": [
+        "enabled",
+        "maxPerHour",
+        "ownerIds"
+      ],
+      "lines": 316,
+      "sha256_source": "8e25aac3fe1962378b8ccc67c4f0c2d952bfb5e347dd5c2552500512b7a4a94a",
+      "sha256_shipped": "8e25aac3fe1962378b8ccc67c4f0c2d952bfb5e347dd5c2552500512b7a4a94a",
+      "blocked_runtime_attrs": [
+        "account",
+        "ai",
+        "config",
+        "db",
+        "mode",
+        "pc",
+        "plugins",
+        "set_persona",
+        "style"
+      ],
+      "runtime_ref_lines": {
+        "account": [
+          244,
+          258
+        ],
+        "ai": [
+          227,
+          229
+        ],
+        "config": [
+          187,
+          188,
+          164
+        ],
+        "db": [
+          245,
+          242,
+          255
+        ],
+        "mode": [
+          244,
+          258
+        ],
+        "pc": [
+          156,
+          160,
+          206,
+          222
+        ],
+        "plugins": [
+          304,
+          289,
+          298,
+          237
+        ],
+        "set_persona": [
+          282
+        ],
+        "style": [
+          276,
+          270,
+          271
+        ]
+      },
+      "files": [
+        "pc_control.py"
+      ]
+    },
+    {
+      "id": "pixiv_illust",
+      "pack_id": "pixiv_illust",
+      "name": "Pixiv 插图",
+      "description": "启用后发 /插图 关键词，读取配置的Lolicon兼容服务并发送真实图片，附作品及作者来源。当前接入全年龄图片；Pixiv直连和Cookie模式尚未验证，不能只改开关就使用。默认关闭。",
+      "category": "media",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.mode；钩子里联网读网页，单次超时预算可达 4~6 秒，超过目录 mod 的 2 秒围栏",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_ingest",
+        "on_prepare",
+        "on_sent"
+      ],
+      "permissions": [
+        "read_message",
+        "send_message",
+        "store_data",
+        "network"
+      ],
+      "config_keys": [
+        "adminIds",
+        "allowR18",
+        "cookie",
+        "deadTtlDays",
+        "enabled",
+        "excludeAI",
+        "imageUrlTemplate",
+        "loliconApiUrl",
+        "maxCount",
+        "ownerIds",
+        "poolSize",
+        "proxyUrl",
+        "ratings",
+        "retryCandidates",
+        "searchBackend",
+        "searchUrlTemplate",
+        "stateCap",
+        "timeoutMs",
+        "userAgent"
+      ],
+      "lines": 343,
+      "sha256_source": "fe375fac2f028e074954159a2e20013cbeb3d7f11c6f0a4de1fd6ba2afb985cc",
+      "sha256_shipped": "fe375fac2f028e074954159a2e20013cbeb3d7f11c6f0a4de1fd6ba2afb985cc",
+      "blocked_runtime_attrs": [
+        "mode"
+      ],
+      "runtime_ref_lines": {
+        "mode": [
+          301
+        ]
+      },
+      "files": [
+        "pixiv_illust.py"
+      ]
+    },
+    {
+      "id": "poke_counter",
+      "pack_id": "pack_poke_counter",
+      "name": "戳一戳统计",
+      "description": "统计每天被戳一戳的次数；被戳时按概率回复预设文本，并对一个数字执行预设运算后播报结果。普通QQ支持真实戳一戳；官方接入用 /戳一戳 指令。/戳一戳统计 查询次数；回复不经模型。",
+      "category": "utility",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_ingest"
+      ],
+      "permissions": [
+        "read_message",
+        "store_data"
+      ],
+      "config_keys": [
+        "cooldownMs",
+        "enabled",
+        "expression",
+        "initialValue",
+        "perGroup",
+        "replyProbability",
+        "replyTexts",
+        "showDailyCount",
+        "showNumber"
+      ],
+      "lines": 337,
+      "sha256_source": "04dc440d72bf929146a224dd16efab506be77ab3449cdc5cec23e0e9fdfb59f1",
+      "sha256_shipped": "04dc440d72bf929146a224dd16efab506be77ab3449cdc5cec23e0e9fdfb59f1",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "plugin.json",
+        "poke_counter.py"
+      ]
+    },
+    {
+      "id": "proactive_chat",
+      "pack_id": "proactive_chat",
+      "name": "指定群主动开话题",
+      "description": "在指定群聊中，长时间无消息后主动开启话题",
+      "category": "social",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.ai/runtime.ai_lock/runtime.can_send_proactive/runtime.db/runtime.has_plugin_outgoing/runtime.last_interaction/runtime.mode/runtime.queue_plugin_outgoing/runtime.style；钩子里 await sleep，超过目录 mod 的 2 秒围栏就会被整钩子跳过",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "tick",
+        "on_proactive_sent"
+      ],
+      "permissions": [
+        "send_message",
+        "store_data"
+      ],
+      "config_keys": [
+        "activeHours",
+        "dailyTokenBudget",
+        "enabled",
+        "groups",
+        "idleMinutes",
+        "jitterSec",
+        "maxPerDayPerGroup",
+        "maxTokens",
+        "minGapMinutes",
+        "topics",
+        "useModel"
+      ],
+      "lines": 209,
+      "sha256_source": "4fee6ab507e8d814fdc96017c185e5c696962dd2d19dd1c74e984caf482724fa",
+      "sha256_shipped": "4fee6ab507e8d814fdc96017c185e5c696962dd2d19dd1c74e984caf482724fa",
+      "blocked_runtime_attrs": [
+        "ai",
+        "ai_lock",
+        "can_send_proactive",
+        "db",
+        "has_plugin_outgoing",
+        "last_interaction",
+        "mode",
+        "queue_plugin_outgoing",
+        "style"
+      ],
+      "runtime_ref_lines": {
+        "ai": [
+          196
+        ],
+        "ai_lock": [
+          195
+        ],
+        "can_send_proactive": [
+          155
+        ],
+        "db": [
+          126
+        ],
+        "has_plugin_outgoing": [
+          155
+        ],
+        "last_interaction": [
+          125
+        ],
+        "mode": [
+          140
+        ],
+        "queue_plugin_outgoing": [
+          177
+        ],
+        "style": [
+          201
+        ]
+      },
+      "files": [
+        "proactive_chat.py"
+      ]
+    },
+    {
+      "id": "probability_reply",
+      "pack_id": "probability_reply",
+      "name": "戳一戳概率回应",
+      "description": "被戳时按概率决定是否回应、反戳或忽略。（修正说明：原来只靠文本里有没有「戳了戳」判断拍一拍，而本项目传的是语义化的 notice='poke'，导致插件**从不触发**；现在两种形式都认，并且冷却按「谁戳的」计算。）",
+      "category": "social",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.account/runtime.onebot",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_ingest",
+        "on_pre_ai"
+      ],
+      "permissions": [
+        "read_message",
+        "store_data"
+      ],
+      "config_keys": [
+        "burstCount",
+        "burstEnabled",
+        "burstWindowSec",
+        "cooldownSec",
+        "enabled",
+        "ignorePokes",
+        "pokeBackPercent",
+        "replyPercent"
+      ],
+      "lines": 171,
+      "sha256_source": "0e41e16d43ca9904a7b4cbc7a8955134a7ed18428e5321febc2d1593bdafc48b",
+      "sha256_shipped": "0e41e16d43ca9904a7b4cbc7a8955134a7ed18428e5321febc2d1593bdafc48b",
+      "blocked_runtime_attrs": [
+        "account",
+        "onebot"
+      ],
+      "runtime_ref_lines": {
+        "account": [
+          146
+        ],
+        "onebot": [
+          156
+        ]
+      },
+      "files": [
+        "probability_reply.py"
+      ]
+    },
+    {
+      "id": "qqagent_bridge",
+      "pack_id": "qqagent_bridge",
+      "name": "QQ Agent 能力桥",
+      "description": "把指定的 QQ Agent provider/hook/tool 接入消息生命周期；仅主人、默认关闭、单扩展隔离。",
+      "category": "utility",
+      "channel": "override",
+      "channel_reason": "会起 node 子进程，远超目录 mod 的 2 秒钩子超时；且用 __file__ 定位宿主脚本；宿主根定位由 `parents[2]` 改为逐级向上探测，装到 custom_plugins/ 下仍能找到 runtime/qqagent-host",
+      "patched": true,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_prepare",
+        "on_pre_ai_async",
+        "on_pre_ai",
+        "on_post_reply",
+        "on_before_tool",
+        "on_after_tool"
+      ],
+      "permissions": [
+        "read_message",
+        "send_message"
+      ],
+      "config_keys": [
+        "autoDiscover",
+        "catalogPath",
+        "enabled",
+        "event",
+        "extensionPath",
+        "extensionsDir",
+        "hookName",
+        "hostRoot",
+        "hostScript",
+        "injectPrompt",
+        "maxProfiles",
+        "nodeExe",
+        "ownerIds",
+        "ownerOnly",
+        "preAiBudgetMs",
+        "privilegeEscalation",
+        "profiles",
+        "provider",
+        "sourceDir",
+        "timeout",
+        "toolAllowlist"
+      ],
+      "lines": 2311,
+      "sha256_source": "097a26971afd750c974e55d38622ab6d2217578466db33dccd9523a10079dfb7",
+      "sha256_shipped": "454096052a1d246924eae5e2f2680112a02201f6ef1bfd48be80fa9ad9132774",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "qqagent_bridge.py"
+      ]
+    },
+    {
+      "id": "question_relay",
+      "pack_id": "pack_question_relay",
+      "name": "问号接龙",
+      "description": "群里连续发问号时，机器人跟着发一个问号",
+      "category": "social",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_ingest"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "enabled",
+        "lookback",
+        "minChain",
+        "questionChars",
+        "relayChar"
+      ],
+      "lines": 76,
+      "sha256_source": "b41eb16d11f2fb098c57c7071f2cb07a84e10738f534ec4366be4ebcaa6091f2",
+      "sha256_shipped": "b41eb16d11f2fb098c57c7071f2cb07a84e10738f534ec4366be4ebcaa6091f2",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "plugin.json",
+        "question_relay.py"
+      ]
+    },
+    {
+      "id": "quick_menu",
+      "pack_id": "quick_menu",
+      "name": "功能菜单与B站分享",
+      "description": "发送 /菜单 查看功能；B站链接和卡片读取公开简介；/视频 BV号 请求可用的低清MP4。官方按钮需平台权限；不开启时发送普通菜单。",
+      "category": "utility",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.mode/runtime.reply_meta",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [
+        "on_ingest",
+        "on_prepare",
+        "on_pre_ai"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "autoBilibili",
+        "cover",
+        "coverUrl",
+        "enabled",
+        "richMenu",
+        "sendVideo",
+        "title"
+      ],
+      "lines": 65,
+      "sha256_source": "536b72bc3be2bb75c95af3334c546938f4c005dc343c9ca2ccb78e1be00858a6",
+      "sha256_shipped": "536b72bc3be2bb75c95af3334c546938f4c005dc343c9ca2ccb78e1be00858a6",
+      "blocked_runtime_attrs": [
+        "mode",
+        "reply_meta"
+      ],
+      "runtime_ref_lines": {
+        "mode": [
+          56
+        ],
+        "reply_meta": [
+          53,
+          63,
+          55
+        ]
+      },
+      "files": [
+        "quick_menu.py"
+      ]
+    },
+    {
+      "id": "quote_reply",
+      "pack_id": "pack_quote_reply",
+      "name": "引用规范",
+      "description": "提示AI使用「」引号格式而非>引号",
+      "category": "style",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [
+        "on_pre_ai"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "enabled"
+      ],
+      "lines": 28,
+      "sha256_source": "1a4647defe4e895b838a3f0bf3a97d4a80534aae7939c382ca099e013f5a9b7b",
+      "sha256_shipped": "1a4647defe4e895b838a3f0bf3a97d4a80534aae7939c382ca099e013f5a9b7b",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "plugin.json",
+        "quote_reply.py"
+      ]
+    },
+    {
+      "id": "repeat_echo",
+      "pack_id": "pack_repeat_echo",
+      "name": "群聊复读机",
+      "description": "当多人说了相同的话时，机器人跟着复读。纯媒体占位（[图片]、[表情:微笑]、[语音]…）不复读 —— 多人发表情包会得到相同占位文本，复读它只是刷屏。",
+      "category": "social",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_ingest"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "cooldownSec",
+        "enabled",
+        "maxLen",
+        "maxPerHour",
+        "maxPerWindow",
+        "onlyWhenIdle",
+        "pairWindowSec",
+        "sameTextBlockMin",
+        "windowMin"
+      ],
+      "lines": 155,
+      "sha256_source": "e85078daa5672f42130d7c8b444bb8174fb2e5d6ae2ac677d1e4e187fe622a9b",
+      "sha256_shipped": "e85078daa5672f42130d7c8b444bb8174fb2e5d6ae2ac677d1e4e187fe622a9b",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "plugin.json",
+        "repeat_echo.py"
+      ]
+    },
+    {
+      "id": "reply_freshness",
+      "pack_id": "reply_freshness",
+      "name": "回复时机与引用",
+      "description": "移植自社区插件 reply-freshness：把\"现在几点、群里最新一条是谁、你要回的那条还新不新鲜\"算清楚，追加在当前这条消息末尾（不动系统提示词，不伤前缀缓存）。晚回就自然补一句衔接；群里冷场时提醒她别为了清空未读继续回旧消息。另有可选的硬刹车「冷场就不回」（默认关）：真的安静下来又没人点她时，本轮不发。",
+      "category": "social",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.account/runtime.db/runtime.mode",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_ingest",
+        "on_block",
+        "on_pre_ai",
+        "on_sent"
+      ],
+      "permissions": [
+        "read_message",
+        "send_message",
+        "store_data"
+      ],
+      "config_keys": [
+        "announce",
+        "coldAdvice",
+        "coldHold",
+        "enabled",
+        "lateReplySeconds",
+        "quietSeconds",
+        "scanLimit",
+        "verbose"
+      ],
+      "lines": 267,
+      "sha256_source": "49214a58c50e2675859c5df095769bc8f50e5bf3f50085d6cff8dc671e099797",
+      "sha256_shipped": "49214a58c50e2675859c5df095769bc8f50e5bf3f50085d6cff8dc671e099797",
+      "blocked_runtime_attrs": [
+        "account",
+        "db",
+        "mode"
+      ],
+      "runtime_ref_lines": {
+        "account": [
+          180
+        ],
+        "db": [
+          177
+        ],
+        "mode": [
+          180
+        ]
+      },
+      "files": [
+        "reply_freshness.py"
+      ]
+    },
+    {
+      "id": "reply_guards",
+      "pack_id": "pack_reply_guards",
+      "name": "复读接梗",
+      "description": "群里出现跟风短句时，提示AI自然融入",
+      "category": "social",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_pre_ai"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "enabled",
+        "memeWindowSec"
+      ],
+      "lines": 59,
+      "sha256_source": "b82a55a2c9bc23721ea561567dcbc538fe90c3677b111153900a71888116c9b1",
+      "sha256_shipped": "b82a55a2c9bc23721ea561567dcbc538fe90c3677b111153900a71888116c9b1",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "plugin.json",
+        "reply_guards.py"
+      ]
+    },
+    {
+      "id": "reply_variety",
+      "pack_id": "reply_variety",
+      "name": "回复多样化（防复读）",
+      "description": "回复和本会话最近几条自己的话太像时，带指令重生成一次，避免每句都是同一个开场/口头禅（例如连续回十几条\"不服开帖\"）。",
+      "category": "rhythm",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.account",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "enabled",
+        "lookback",
+        "retryOnce",
+        "thresholdPercent"
+      ],
+      "lines": 161,
+      "sha256_source": "b21865168d5984f05b2a0fd294ec93330285fddda5a8cd29c0eac9745768db53",
+      "sha256_shipped": "b21865168d5984f05b2a0fd294ec93330285fddda5a8cd29c0eac9745768db53",
+      "blocked_runtime_attrs": [
+        "account"
+      ],
+      "runtime_ref_lines": {
+        "account": [
+          102
+        ]
+      },
+      "files": [
+        "reply_variety.py"
+      ]
+    },
+    {
+      "id": "scheduled_announcer",
+      "pack_id": "scheduled_announcer",
+      "name": "定时消息与文案推送",
+      "description": "在指定星期和时刻给指定群发送固定文字，或用现有模型生成文案。普通QQ接入可用；官方QQ的主动消息权限不在本功能支持范围内。每次任务独立去重，超时发送不会自动重发。",
+      "category": "social",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.ai/runtime.ai_lock/runtime.can_send_proactive/runtime.mode/runtime.outgoing_exists/runtime.queue_outgoing/runtime.running",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "validate_settings",
+        "tick"
+      ],
+      "permissions": [
+        "send_message"
+      ],
+      "config_keys": [
+        "content",
+        "enabled",
+        "groupIds",
+        "maxChars",
+        "times",
+        "useAI",
+        "weekdays"
+      ],
+      "lines": 66,
+      "sha256_source": "b5d98b1a9c6f0d06e7fd999e597a8666a47157fcaa44b034b70808eff11a29fb",
+      "sha256_shipped": "b5d98b1a9c6f0d06e7fd999e597a8666a47157fcaa44b034b70808eff11a29fb",
+      "blocked_runtime_attrs": [
+        "ai",
+        "ai_lock",
+        "can_send_proactive",
+        "mode",
+        "outgoing_exists",
+        "queue_outgoing",
+        "running"
+      ],
+      "runtime_ref_lines": {
+        "ai": [
+          60
+        ],
+        "ai_lock": [
+          59
+        ],
+        "can_send_proactive": [
+          53
+        ],
+        "mode": [
+          39
+        ],
+        "outgoing_exists": [
+          53
+        ],
+        "queue_outgoing": [
+          65
+        ],
+        "running": [
+          39
+        ]
+      },
+      "files": [
+        "scheduled_announcer.py"
+      ]
+    },
+    {
+      "id": "search_query_hygiene",
+      "pack_id": "search_query_hygiene",
+      "name": "搜索词清理与联网查找",
+      "description": "发送 /搜索 关键词，清理口语后读取必应结果并提供带链接的参考；搜索失败明确说明，不编造来源。",
+      "category": "utility",
+      "channel": "override",
+      "channel_reason": "钩子里联网读网页，单次超时预算可达 4~6 秒，超过目录 mod 的 2 秒围栏",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [
+        "on_prepare",
+        "on_pre_ai"
+      ],
+      "permissions": [
+        "read_message",
+        "network"
+      ],
+      "config_keys": [
+        "enabled",
+        "maxResults",
+        "timeoutMs"
+      ],
+      "lines": 94,
+      "sha256_source": "53b4feb5a65f79bd6ac43a03d4a5f1c6cfd63dd14b8ea0dec6a083dc8be7509a",
+      "sha256_shipped": "53b4feb5a65f79bd6ac43a03d4a5f1c6cfd63dd14b8ea0dec6a083dc8be7509a",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "search_query_hygiene.py"
+      ]
+    },
+    {
+      "id": "send_pacing",
+      "pack_id": "pack_send_pacing",
+      "name": "打字速度",
+      "description": "在句子之间插入打字延迟标记，模拟真人打字节奏。「媒体消息也分段」关掉时，带图片/表情的回复不再拆句 —— 否则媒体段与文字会被拆开成两条消息，看起来像机器人漏发了图。",
+      "category": "rhythm",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_post_reply"
+      ],
+      "permissions": [
+        "send_message"
+      ],
+      "config_keys": [
+        "baseMs",
+        "enabled",
+        "maxMs",
+        "maxMsPerChar",
+        "mediaPacing",
+        "minMs",
+        "minMsPerChar"
+      ],
+      "lines": 119,
+      "sha256_source": "10ec4aed6627326a0d86db119cbae7cc072baaab48daff76e74fbfc9d9afc283",
+      "sha256_shipped": "10ec4aed6627326a0d86db119cbae7cc072baaab48daff76e74fbfc9d9afc283",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "plugin.json",
+        "send_pacing.py"
+      ]
+    },
+    {
+      "id": "share_card",
+      "pack_id": "share_card",
+      "name": "分享卡片与网页解读",
+      "description": "把群友转发的分享卡片与链接整理进上下文：卡片自带的标题/描述/来源/跳转链接会被解析出来，并标出平台（B站、抖音、小红书…），同一链接 10 分钟内只整理一次。可选读取公开网页标题、描述和正文；遇登录/验证码/动态网页会明确说明。截图识别使用现有视觉插件。",
+      "category": "media",
+      "channel": "override",
+      "channel_reason": "钩子里联网读网页，单次超时预算可达 4~6 秒，超过目录 mod 的 2 秒围栏",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_prepare",
+        "on_pre_ai"
+      ],
+      "permissions": [
+        "read_message",
+        "network"
+      ],
+      "config_keys": [
+        "cacheTtlSec",
+        "collectLinks",
+        "enabled",
+        "maxLinks",
+        "platformHint",
+        "readBudgetMs",
+        "readCards",
+        "readTimeoutMs",
+        "readWeb"
+      ],
+      "lines": 330,
+      "sha256_source": "eddbaca67a2ac58c737f09301eff7a27c9dac9b48132f0cfc762c9388917be98",
+      "sha256_shipped": "eddbaca67a2ac58c737f09301eff7a27c9dac9b48132f0cfc762c9388917be98",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "share_card.py"
+      ]
+    },
+    {
+      "id": "short_followup",
+      "pack_id": "short_followup",
+      "name": "短期跟聊",
+      "description": "成功回复后，同一群友可在跟聊窗口内继续说话，无需重复 @；回复更简短自然。「句数上限」会真正写进提示词（以前那一项叫「最大token」，实际提示里写死了不超过 2 句，拨了没有任何效果）。",
+      "category": "rhythm",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.onebot",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [
+        "on_pre_ai",
+        "on_sent"
+      ],
+      "permissions": [
+        "read_message",
+        "send_message"
+      ],
+      "config_keys": [
+        "enabled",
+        "followupWindowSec",
+        "maxSentences"
+      ],
+      "lines": 104,
+      "sha256_source": "3cac2c6be252c6543ab16aa64dd7d7432e259ee0f420510470decd974b40e1b5",
+      "sha256_shipped": "3cac2c6be252c6543ab16aa64dd7d7432e259ee0f420510470decd974b40e1b5",
+      "blocked_runtime_attrs": [
+        "onebot"
+      ],
+      "runtime_ref_lines": {
+        "onebot": [
+          90
+        ]
+      },
+      "files": [
+        "short_followup.py"
+      ]
+    },
+    {
+      "id": "silence_ping",
+      "pack_id": "silence_ping",
+      "name": "主动私信",
+      "description": "当指定用户长时间不说话时，主动发私信关心",
+      "category": "social",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.ai/runtime.ai_lock/runtime.can_send_proactive/runtime.db/runtime.has_plugin_outgoing/runtime.last_interaction/runtime.last_outbound/runtime.queue_plugin_outgoing/runtime.style",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_proactive_sent",
+        "tick"
+      ],
+      "permissions": [
+        "send_message",
+        "store_data"
+      ],
+      "config_keys": [
+        "cooldownMinutes",
+        "dryRun",
+        "enabled",
+        "maxPerDay",
+        "noRepeatWhenUnreplied",
+        "quietRange",
+        "targetIdleMinMinutes",
+        "targets",
+        "wakeRange"
+      ],
+      "lines": 182,
+      "sha256_source": "bf3485cb0693c87f653edbca92738a5769bf45d1c7b31cf64751a111f729c906",
+      "sha256_shipped": "bf3485cb0693c87f653edbca92738a5769bf45d1c7b31cf64751a111f729c906",
+      "blocked_runtime_attrs": [
+        "ai",
+        "ai_lock",
+        "can_send_proactive",
+        "db",
+        "has_plugin_outgoing",
+        "last_interaction",
+        "last_outbound",
+        "queue_plugin_outgoing",
+        "style"
+      ],
+      "runtime_ref_lines": {
+        "ai": [
+          172
+        ],
+        "ai_lock": [
+          171
+        ],
+        "can_send_proactive": [
+          155
+        ],
+        "db": [
+          85,
+          100
+        ],
+        "has_plugin_outgoing": [
+          156
+        ],
+        "last_interaction": [
+          84
+        ],
+        "last_outbound": [
+          98
+        ],
+        "queue_plugin_outgoing": [
+          164
+        ],
+        "style": [
+          177
+        ]
+      },
+      "files": [
+        "silence_ping.py"
+      ]
+    },
+    {
+      "id": "sleep_mode",
+      "pack_id": "pack_sleep_mode",
+      "name": "睡眠时段",
+      "description": "在指定时间段内不回复消息",
+      "category": "rhythm",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_block"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "allowAt",
+        "enabled",
+        "endTime",
+        "startTime"
+      ],
+      "lines": 66,
+      "sha256_source": "fa51806321171bf33f87abb087787cfe30defc2311adbba614904ab640b8ea5a",
+      "sha256_shipped": "fa51806321171bf33f87abb087787cfe30defc2311adbba614904ab640b8ea5a",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "plugin.json",
+        "sleep_mode.py"
+      ]
+    },
+    {
+      "id": "speech_to_text_qq",
+      "pack_id": "pack_speech_to_text_qq",
+      "name": "语音转文字（QQ 原生）",
+      "description": "通过普通 QQ / OneBot 协议端的 fetch_ptt_text 接口转写语音。默认关闭，是否可用取决于当前协议端；失败时明确说明，不能猜测。官方接入附件自带的转写文字由消息链路直接读取，无需开启本插件。",
+      "category": "media",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_prepare",
+        "on_pre_ai"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "budgetMs",
+        "debugLog",
+        "enabled",
+        "timeoutMs"
+      ],
+      "lines": 214,
+      "sha256_source": "44677a3688a5449bf6482eed6d9d9410958b0eb816feca1d547cf6f8226df019",
+      "sha256_shipped": "44677a3688a5449bf6482eed6d9d9410958b0eb816feca1d547cf6f8226df019",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "plugin.json",
+        "speech_to_text_qq.py"
+      ]
+    },
+    {
+      "id": "sticker_admin",
+      "pack_id": "pack_sticker_admin",
+      "name": "表情包管理",
+      "description": "点击“管理表情库”查看缩略图、搜索、上传、修改标签与含义、让AI识图及删除本地收藏。只管理机器人自己的本地库，不同步删除QQ收藏，也不改写核心程序。手动图库仍在“表情包与自定义图库”中配置。",
+      "category": "media",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "enabled",
+        "gifFrames"
+      ],
+      "lines": 11,
+      "sha256_source": "0fe72a66dad3cc8bf7946161c568205230604c9ffa817c72da9ef59e78b71f38",
+      "sha256_shipped": "0fe72a66dad3cc8bf7946161c568205230604c9ffa817c72da9ef59e78b71f38",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "plugin.json",
+        "sticker_admin.py"
+      ]
+    },
+    {
+      "id": "sticker_cadence",
+      "pack_id": "sticker_cadence",
+      "name": "每三次表情",
+      "description": "每个会话中，机器人每成功回复N次附带一张真实图库图片。发送失败不计数，已有图片不再追加，避免官方QQ一条回复多图。没有可用图片时只回文字，不伪装成颜文字。",
+      "category": "personality",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.reply_meta；调用了宿主 chat_state.scope_of()，它内部读 runtime.mode / runtime.account() / runtime.plugins",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_pre_ai",
+        "on_sent"
+      ],
+      "permissions": [
+        "read_message",
+        "send_message",
+        "store_data"
+      ],
+      "config_keys": [
+        "enabled",
+        "sendEveryN",
+        "skipIfMismatch"
+      ],
+      "lines": 89,
+      "sha256_source": "f15e3c68a068c14157cdf0bd834bf2a53d9018930c928d3abcd25e5aacf86452",
+      "sha256_shipped": "f15e3c68a068c14157cdf0bd834bf2a53d9018930c928d3abcd25e5aacf86452",
+      "blocked_runtime_attrs": [
+        "reply_meta"
+      ],
+      "runtime_ref_lines": {
+        "reply_meta": [
+          76
+        ]
+      },
+      "files": [
+        "sticker_cadence.py"
+      ]
+    },
+    {
+      "id": "sticker_cap",
+      "pack_id": "pack_sticker_cap",
+      "name": "表情包库上限",
+      "description": "防止有人一直发表情包把库和磁盘撑爆：按数量上限做 LRU 淘汰、按磁盘配额清理、可屏蔽指定人的表情。只管理机器人实际收藏的表情库和索引，不删除外部目录或手动图库；收集由“偷表情包”插件完成，/表情容量 可查看用量。",
+      "category": "media",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_ingest",
+        "tick"
+      ],
+      "permissions": [
+        "read_message",
+        "send_message"
+      ],
+      "config_keys": [
+        "blockedSenders",
+        "checkIntervalSec",
+        "dryRun",
+        "enabled",
+        "maxItems",
+        "maxSizeMb",
+        "stickerDir"
+      ],
+      "lines": 240,
+      "sha256_source": "75dc90417b84de5a27090a24eb6f4467ad83ea896ed418dfe4138a1d36a96980",
+      "sha256_shipped": "75dc90417b84de5a27090a24eb6f4467ad83ea896ed418dfe4138a1d36a96980",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "plugin.json",
+        "sticker_cap.py"
+      ]
+    },
+    {
+      "id": "sticker_memory",
+      "pack_id": "pack_sticker_memory",
+      "name": "表情包识别记忆",
+      "description": "缓存视觉模型成功识别的单张表情含义，按协议图片标识、完整链接或内联图片指纹复用。只记表情模式需要协议提供表情标记或小图尺寸，普通照片不会凭空被当作表情。识别失败不写入；多图消息仍正常识图，避免漏看未缓存的图。",
+      "category": "media",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [],
+      "permissions": [
+        "store_data"
+      ],
+      "config_keys": [
+        "enabled",
+        "maxCacheEntries",
+        "recheckCrossChatDays",
+        "recheckSameChatHours",
+        "skipThreshold",
+        "stickerOnly"
+      ],
+      "lines": 333,
+      "sha256_source": "95ba75ebd0291bbd75ed62a4eddcb2756362c03204a45c9a933905d7406ea0b8",
+      "sha256_shipped": "95ba75ebd0291bbd75ed62a4eddcb2756362c03204a45c9a933905d7406ea0b8",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "plugin.json",
+        "sticker_memory.py"
+      ]
+    },
+    {
+      "id": "sticker_steal",
+      "pack_id": "sticker_steal",
+      "name": "偷表情包与本地收藏",
+      "description": "自动保存实际收到的表情图片，按内容去重，加入机器人自己的图库。支持官方QQ与普通QQ；不会写入或删除你的QQ收藏。默认只收表情/动图及小尺寸图片，不收普通大照片。官方QQ只能收平台实际推送的消息。",
+      "category": "media",
+      "channel": "override",
+      "channel_reason": "钩子直接读宿主 runtime.plugins",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_ingest"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "allowPrivate",
+        "blockedSenders",
+        "enabled",
+        "maxLibraryMb",
+        "maxLibrarySize",
+        "stickerOnly"
+      ],
+      "lines": 47,
+      "sha256_source": "bec32a438b28b16c266c4ad71351d78c078a48456a557e8dc5dbf980b5e435e2",
+      "sha256_shipped": "bec32a438b28b16c266c4ad71351d78c078a48456a557e8dc5dbf980b5e435e2",
+      "blocked_runtime_attrs": [
+        "plugins"
+      ],
+      "runtime_ref_lines": {
+        "plugins": [
+          22
+        ]
+      },
+      "files": [
+        "sticker_steal.py"
+      ]
+    },
+    {
+      "id": "token_saver",
+      "pack_id": "pack_token_saver",
+      "name": "Token 节流",
+      "description": "移植自社区插件 token-saver，并按本项目的真机数据加强：① 历史滑窗裁剪，更早的内容压成一行摘要（只截取原文，不生成新内容）；② 截断历史里过长的单条内容（转发摘要/图片描述/网页正文这类每轮都要重发的长文本）；③ 删掉内容完全重复的轮次；④ 整段对话超过字数上限时从最早的轮次开始删（system 与当前这轮永不删除）。实测单轮 prompt 平均 1897 token、输出只有 25 token，所以这里省的每一字都直接省钱。全程只做减法，出错静默放行。",
+      "category": "utility",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": true,
+      "hooks": [
+        "on_pre_ai"
+      ],
+      "permissions": [
+        "read_message",
+        "store_data"
+      ],
+      "config_keys": [
+        "dedupeDuplicates",
+        "enabled",
+        "historyMediaChars",
+        "historyMode",
+        "keepRecentMessages",
+        "maxContentChars",
+        "maxDigestChars",
+        "maxPromptChars",
+        "verbose"
+      ],
+      "lines": 229,
+      "sha256_source": "cfa5ac2a8b59693fafa07aab14bdeffb496e51589358d03cbbe26dbce25d8b0e",
+      "sha256_shipped": "cfa5ac2a8b59693fafa07aab14bdeffb496e51589358d03cbbe26dbce25d8b0e",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "plugin.json",
+        "token_saver.py"
+      ]
+    },
+    {
+      "id": "turn_complete",
+      "pack_id": "pack_turn_complete",
+      "name": "对话完成判定",
+      "description": "同一个人连着发消息时，别在人家话还没说完的时候插嘴。按内容判定：结尾悬着、落在连接词上、或者只有几个字 → 再多等一会儿；像一句问话、只是在喊人、说得比较长 → 照常回。（移植说明：JS 版靠宿主的唤醒倒计时仲裁，本项目只在当前一轮内延后等待，不会提前回复；多人同时说话时把说话人摘要告诉模型。）",
+      "category": "message",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_pre_ai"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "anchorOnly",
+        "capMs",
+        "contentJudge",
+        "enabled",
+        "maxDelayMs",
+        "quietMs",
+        "tellModel"
+      ],
+      "lines": 308,
+      "sha256_source": "4357860f82ade8668db35ce698807ec4b94741df16acb939c3e5fde62592654f",
+      "sha256_shipped": "4357860f82ade8668db35ce698807ec4b94741df16acb939c3e5fde62592654f",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "plugin.json",
+        "turn_complete.py"
+      ]
+    },
+    {
+      "id": "typing_indicator",
+      "pack_id": "pack_typing_indicator",
+      "name": "正在输入提示",
+      "description": "私聊（可选群聊）里让机器人像真人一样亮起「正在输入…」：从它决定要回话到消息发出之间，对方会看到正在输入。零 token：不改提示词、不注册工具、不调模型，只在对的时机补发状态包。（需要协议端支持 set_input_status；官方接口不支持，此模式下不生效。）",
+      "category": "utility",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_pre_ai"
+      ],
+      "permissions": [
+        "read_message"
+      ],
+      "config_keys": [
+        "cooldownSec",
+        "enabled",
+        "eventType",
+        "minDelayMs",
+        "privateOnly",
+        "showTyping"
+      ],
+      "lines": 161,
+      "sha256_source": "9d44fd7ab6103e3d3beae609a3020fb359fb32dcaa06675cb24e6976b16a1b34",
+      "sha256_shipped": "9d44fd7ab6103e3d3beae609a3020fb359fb32dcaa06675cb24e6976b16a1b34",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "plugin.json",
+        "typing_indicator.py"
+      ]
+    },
+    {
+      "id": "typo_sim",
+      "pack_id": "pack_typo_sim",
+      "name": "打字错误模拟",
+      "description": "随机在回复中注入打字错误，更像真人",
+      "category": "personality",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": true,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_post_reply"
+      ],
+      "permissions": [
+        "send_message"
+      ],
+      "config_keys": [
+        "corrections",
+        "enabled",
+        "typoRate"
+      ],
+      "lines": 62,
+      "sha256_source": "8b6288ee9af129ca2525d8fe74dcb3c3fa6a7217270cc93e6497c9fc2cb7eb7a",
+      "sha256_shipped": "8b6288ee9af129ca2525d8fe74dcb3c3fa6a7217270cc93e6497c9fc2cb7eb7a",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "plugin.json",
+        "typo_sim.py"
+      ]
+    },
+    {
+      "id": "voice_reply",
+      "pack_id": "pack_voice_reply",
+      "name": "自动语音",
+      "description": "按 explicit/text/voice/both 策略把回复朗读成语音并发送。默认 explicit 且关闭；群聊未点名不自动朗读；语音失败回文字并说明。",
+      "category": "voice",
+      "channel": "mod",
+      "channel_reason": "只访问 ModRuntime 门面，可安全走目录 mod",
+      "patched": false,
+      "builtin": false,
+      "enabled_by_default": false,
+      "hooks": [
+        "on_pre_ai",
+        "on_post_reply"
+      ],
+      "permissions": [
+        "read_message",
+        "send_message"
+      ],
+      "config_keys": [
+        "enabled",
+        "fallbackToText",
+        "groupRequiresName",
+        "maxChars",
+        "mode"
+      ],
+      "lines": 97,
+      "sha256_source": "dee42281e5346461dbbb19e021f55fe098a974c4dbe6ad57f568fc66538ff000",
+      "sha256_shipped": "dee42281e5346461dbbb19e021f55fe098a974c4dbe6ad57f568fc66538ff000",
+      "blocked_runtime_attrs": [],
+      "runtime_ref_lines": {},
+      "files": [
+        "README.md",
+        "plugin.json",
+        "voice_reply.py"
+      ]
+    }
+  ]
+}

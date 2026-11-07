@@ -1,0 +1,16 @@
+{
+  "id": "pack_typing_indicator",
+  "name": "正在输入提示（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "typing_indicator.py",
+  "permissions": [
+    "read_message"
+  ],
+  "description": "私聊（可选群聊）里让机器人像真人一样亮起「正在输入…」：从它决定要回话到消息发出之间，对方会看到正在输入。零 token：不改提示词、不注册工具、不调模型，只在对的时机补发状态包。（需要协议端支持 set_input_status；官方接口不支持，此模式下不生效。）",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": false,
+  "category": "utility",
+  "source": "builtin:typing_indicator"
+}

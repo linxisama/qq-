@@ -1,0 +1,16 @@
+{
+  "id": "pack_context_chime",
+  "name": "上下文插话判定（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "context_chime.py",
+  "permissions": [
+    "read_message"
+  ],
+  "description": "用一次极短的模型调用判断「这条消息值不值得主动接话」。⚠️ 机制差异：原版在调模型之前判定，判「不接」= 0 token；本项目只能在 AI 调用前（同步钩子）里用独立事件循环发判定请求，判「不接」是拦住回复，**省不下已经花掉的 token**。判定失败默认按「不接」处理（与原版一致，保守侧）。",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": false,
+  "category": "message",
+  "source": "builtin:context_chime"
+}

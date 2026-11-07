@@ -1,0 +1,16 @@
+{
+  "id": "pack_typo_sim",
+  "name": "打字错误模拟（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "typo_sim.py",
+  "permissions": [
+    "send_message"
+  ],
+  "description": "随机在回复中注入打字错误，更像真人",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": false,
+  "category": "personality",
+  "source": "builtin:typo_sim"
+}

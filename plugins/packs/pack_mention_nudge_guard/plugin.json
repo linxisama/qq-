@@ -1,0 +1,16 @@
+{
+  "id": "pack_mention_nudge_guard",
+  "name": "重复艾特忽略（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "mention_nudge_guard.py",
+  "permissions": [
+    "read_message"
+  ],
+  "description": "同一人短时间内多次@时，提示机器人冷静应对",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": true,
+  "category": "rhythm",
+  "source": "builtin:mention_nudge_guard"
+}

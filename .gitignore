@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+.venv/
+venv/
+
+# 运行时产物
+skills/ready/
+# 逐包 zip 与 ready-all.zip 内容重复（34.9 MB），build.py 可随时重生成
+skills/dist/ready-zips/
+*.log
+*.tmp
+*.bak
+*.dsh-bak
+*.bak-dsh-heart-*
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 本地校验残留
+.verify/
+_audit/

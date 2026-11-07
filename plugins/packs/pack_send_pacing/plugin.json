@@ -1,0 +1,16 @@
+{
+  "id": "pack_send_pacing",
+  "name": "打字速度（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "send_pacing.py",
+  "permissions": [
+    "send_message"
+  ],
+  "description": "在句子之间插入打字延迟标记，模拟真人打字节奏。「媒体消息也分段」关掉时，带图片/表情的回复不再拆句 —— 否则媒体段与文字会被拆开成两条消息，看起来像机器人漏发了图。",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": false,
+  "category": "rhythm",
+  "source": "builtin:send_pacing"
+}

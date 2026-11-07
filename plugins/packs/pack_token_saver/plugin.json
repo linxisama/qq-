@@ -1,0 +1,17 @@
+{
+  "id": "pack_token_saver",
+  "name": "Token 节流（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "token_saver.py",
+  "permissions": [
+    "read_message",
+    "store_data"
+  ],
+  "description": "移植自社区插件 token-saver，并按本项目的真机数据加强：① 历史滑窗裁剪，更早的内容压成一行摘要（只截取原文，不生成新内容）；② 截断历史里过长的单条内容（转发摘要/图片描述/网页正文这类每轮都要重发的长文本）；③ 删掉内容完全重复的轮次；④ 整段对话超过字数上限时从最早的轮次开始删（system 与当前这轮永不删除）。实测单轮 prompt 平均 1897 token、输出只有 25 token，所以这里省的每一字都直接省钱。全程只做减法，出错静默放行。",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": true,
+  "category": "utility",
+  "source": "builtin:token_saver"
+}

@@ -1,0 +1,17 @@
+{
+  "id": "pack_voice_reply",
+  "name": "自动语音（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "voice_reply.py",
+  "permissions": [
+    "read_message",
+    "send_message"
+  ],
+  "description": "按 explicit/text/voice/both 策略把回复朗读成语音并发送。默认 explicit 且关闭；群聊未点名不自动朗读；语音失败回文字并说明。",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": false,
+  "category": "voice",
+  "source": "builtin:voice_reply"
+}

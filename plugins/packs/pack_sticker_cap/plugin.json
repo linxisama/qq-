@@ -1,0 +1,17 @@
+{
+  "id": "pack_sticker_cap",
+  "name": "表情包库上限（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "sticker_cap.py",
+  "permissions": [
+    "read_message",
+    "send_message"
+  ],
+  "description": "防止有人一直发表情包把库和磁盘撑爆：按数量上限做 LRU 淘汰、按磁盘配额清理、可屏蔽指定人的表情。只管理机器人实际收藏的表情库和索引，不删除外部目录或手动图库；收集由“偷表情包”插件完成，/表情容量 可查看用量。",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": false,
+  "category": "media",
+  "source": "builtin:sticker_cap"
+}

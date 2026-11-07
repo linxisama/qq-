@@ -1,0 +1,16 @@
+{
+  "id": "pack_mention_gate",
+  "name": "点名闸门（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "mention_gate.py",
+  "permissions": [
+    "read_message"
+  ],
+  "description": "给机器人加一道点名闸门：① 名单里的群只在被 @ 或戳一戳时才开口（其余消息不调模型）；② 精确到某个群的某个人（名单外的人照常回复）；③ 名单之外的群可以完全不受影响，也可以谁叫都不理。@ 按 QQ 号判定，重名不会误判。",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": true,
+  "category": "message",
+  "source": "builtin:mention_gate"
+}

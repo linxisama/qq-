@@ -1,0 +1,17 @@
+{
+  "id": "pack_member_aliases",
+  "name": "群友外号对照（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "member_aliases.py",
+  "permissions": [
+    "read_message",
+    "store_data"
+  ],
+  "description": "移植自社区插件 member-aliases：谁在说话就告诉模型这人还叫什么；消息里出现某人的外号时，告诉模型指的是谁 —— 命中才加几行，没命中一个字不加。外号表可用口令维护：外号 / 外号 加 <QQ号> <外号> / 外号 删 <QQ号> <外号>（管理员或主人）；可选自动从\"我叫X\"里学（默认关）。",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": false,
+  "category": "knowledge",
+  "source": "builtin:member_aliases"
+}

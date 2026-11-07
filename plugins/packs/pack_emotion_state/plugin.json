@@ -1,0 +1,18 @@
+{
+  "id": "pack_emotion_state",
+  "name": "鲸鱼娘情绪与精力（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "emotion_state.py",
+  "permissions": [
+    "read_message",
+    "send_message",
+    "store_data"
+  ],
+  "description": "维护角色的心情、精力和压力，随时间恢复；只在消息发送成功后更新。/状态 可查看当前角色状态。",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": true,
+  "category": "social",
+  "source": "builtin:emotion_state"
+}

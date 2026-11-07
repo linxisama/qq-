@@ -1,0 +1,16 @@
+{
+  "id": "pack_speech_to_text_qq",
+  "name": "语音转文字（QQ 原生）（独立包）",
+  "version": "1.0.0",
+  "api_version": 1,
+  "entry": "speech_to_text_qq.py",
+  "permissions": [
+    "read_message"
+  ],
+  "description": "通过普通 QQ / OneBot 协议端的 fetch_ptt_text 接口转写语音。默认关闭，是否可用取决于当前协议端；失败时明确说明，不能猜测。官方接入附件自带的转写文字由消息链路直接读取，无需开启本插件。",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.112",
+  "enabled_by_default": false,
+  "category": "media",
+  "source": "builtin:speech_to_text_qq"
+}

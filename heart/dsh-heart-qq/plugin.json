@@ -1,0 +1,17 @@
+{
+  "id": "dsh-heart-qq",
+  "name": "心情系统（dsh-heart · QQ）",
+  "version": "0.1.0",
+  "api_version": 1,
+  "entry": "heart_qq.py",
+  "host": "WhaleGirlQQ",
+  "min_host_version": "5.2.0",
+  "category": "social",
+  "enabled_by_default": true,
+  "description": "一组会自己回落的情绪数值，按数值改说话的脸色，并注入到系统提示词；带网页面板（/heart）。",
+  "permissions": [
+    "read_message",
+    "store_data"
+  ],
+  "source": "D:/插件/dsh-heart"
+}
