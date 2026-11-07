@@ -564,7 +564,7 @@ jujutsu-phantom-parade/jujutsu-phantom-parade/{skill.json,plugin.json,lib/,kb/,t
 | `ready/<id>/` | 单个 skill 的源码目录，复制到 `<data>/qq-only/skill_extensions/` 即安装 |
 | `dist/ready-zips/<id>.zip` | 单个 skill 的安装包，走 `POST /api/skills/install` |
 | `dist/ready-all.zip` | 373 个一次装完（解压后跑 `install.py`） |
-| `dist/market-379.zip` | 市场 379 个 zip 的离线镜像 |
+| `dist/market-379.zip` | 市场 379 个 zip 的离线镜像（开发机保留，未进本仓库） |
 
 宿主数据目录（`<data>`）默认是 `D:\qq机器人5.0\data`，即
 `skill_extensions` 在 `D:\qq机器人5.0\data\qq-only\skill_extensions`。

@@ -16,7 +16,7 @@
 
 **本机生产环境已经装好并跑过一遍**：373 个全部装上，`ok 334 / ran-blocked 39 / load-failed 0`。
 
-**分发包也端到端复验过**：解压 `dist/ready-all.zip`（1571 条目）→ `install.py --apply --data-root <临时目录>`
+**分发包也端到端复验过**：解压 `dist/ready-all.zip`（1572 条目）→ `install.py --apply --data-root <临时目录>`
 （`完成 373 个，跳过 0 个，失败 0 个`，registry 启用 373 个）→ `verify.py` 全量真跑：
 **`ok 333 / ran-blocked 40 / load-failed 0`**，与生产目录逐条 diff **只差 `tieba-summary` 一个**——
 它要联网抓贴吧内容，跑满 44887 ms 撞上宿主 45 s 上限（`pixiv-direct` 也是同一类，哪侧超时是随机的）。
@@ -43,7 +43,8 @@ qq-skill-packs/
 └── dist/
     ├── ready-zips/<id>.zip   373 个单包，走 POST /api/skills/install
     ├── ready-all.zip         373 个一次装完（含 install.py / hostfix.py / guard_host.py / INDEX / REPORT）
-    └── market-379.zip        市场 379 个 zip 的离线镜像（35 MB，不是安装包）
+    └── （market-379.zip 是市场 379 个 zip 的离线镜像，35 MB、不是安装包，
+         只在开发机保留，没进本仓库）
 ```
 
 ## 为什么 379 个里 373 个能用
@@ -406,7 +407,7 @@ D:\qq机器人5.0\.venv-qq\Scripts\python.exe -X utf8 build.py
 - **`T2-web-fetch` 那 204 个要联网**。断网/超时的时候会表现为 `ran-blocked`，不是坏了。
 - **个别 skill 要额外资产**（`ygo-kb` 的 `ygo.db`、`character-role` 的角色文档），
   这些属于用户数据，不在包里。
-- **`market-379.zip` 不是安装包**，是市场镜像。别直接丢给「本地插件包」入口。
+- **`market-379.zip` 不是安装包**，是市场镜像，且只在开发机保留、不在本仓库。要重建的话在开发机上跑 `build.py`。
 - **重装/升级**：`install.py` 默认跳过已存在的目录，要覆盖加 `--force`。
 - **改宿主 = 改用户环境**。`hostfix.py --revert` 能完整回滚；不想要补丁又想用 skill，
   只能接受「只有 53 个能注册」这个上限。

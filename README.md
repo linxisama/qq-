@@ -69,9 +69,9 @@ set PY=D:\qq机器人5.0\.venv-qq\Scripts\python.exe
 
 | 文件 | 大小 | 内容 |
 |------|------|------|
-| `plugins/dist/qq-plugin-packs-all.zip` | 369 KB | 66 个插件包 + 4 份 `.patch` |
+| `plugins/dist/qq-plugin-packs-all.zip` | 368 KB | 66 个插件包 + 4 份 `.patch` |
 | `skills/dist/ready-all.zip` | 35 MB | 373 个 skill（1572 条目）+ 根级脚本与文档 |
-| `market/qq插件-市场-5.2.51.zip` | 311 KB | 42 个市场包 + index + 使用说明 |
+| `market/qq插件-市场-5.2.51.zip` | 310 KB | 42 个市场包 + index + 使用说明 |
 | `heart/dsh-heart-qq-0.1.0.zip` | 33 KB | 心情插件自包含分发包 |
 
 逐包 zip（`skills/dist/ready-zips/`，373 个共 34.9 MB）**没有进仓库** —— 内容与 `ready-all.zip` 完全重复。
