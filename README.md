@@ -55,6 +55,15 @@ set PY=D:\qq机器人5.0\.venv-qq\Scripts\python.exe
 
 所有安装器**默认只预演**，加 `--apply` 才写盘。
 
+装完想确认没问题，跑一条自检（只读，不装不改）：
+
+```bash
+%PY% -X utf8 selfcheck.py           # 全部：结构 + 插件挂载 + 技能真跑 + 市场包 + 心情插件
+%PY% -X utf8 selfcheck.py --quick   # 跳过技能真跑（省 10 分钟）
+```
+
+15 项检查，退出码 0 表示全过；`--quick` 时技能那一项显示 `skip`。
+
 ---
 
 ## 关键前提：宿主补丁
@@ -129,6 +138,7 @@ set PY=D:\qq机器人5.0\.venv-qq\Scripts\python.exe
 ```
 qqplugin/
 ├─ README.md              本文件
+├─ selfcheck.py           一键自检（只读；结构 + 四套产物都验一遍）
 ├─ plugins/               66 个插件包（目录 mod + 裸 py override）
 │  ├─ packs/              32 个目录包
 │  ├─ overrides/          34 个裸 .py
