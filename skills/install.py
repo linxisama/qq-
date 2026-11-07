@@ -34,12 +34,35 @@ import argparse
 import json
 import shutil
 import sys
+import zipfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 READY = HERE / "ready"
+BUNDLE_ZIP = HERE / "dist" / "ready-all.zip"
 
 DEFAULT_HOST = Path(r"D:\qq机器人5.0")
+
+
+def ensure_ready() -> Path:
+    """返回可用的 ready/ 目录。
+
+    分发包里不放 75.6 MB 的散文件，只带 dist/ready-all.zip；第一次跑时把它
+    解到本地 ready/（zip 内顶层就是 ready/，所以解压目标是 HERE）。
+    """
+    if READY.is_dir():
+        return READY
+    if not BUNDLE_ZIP.is_file():
+        raise SystemExit(
+            f"找不到 {READY}，也没有 {BUNDLE_ZIP}；\n"
+            f"  有源码的话先跑 build.py，否则确认 dist/ready-all.zip 没被删。")
+    print(f"ready/ 不存在，从 {BUNDLE_ZIP.name} 解压（{human(BUNDLE_ZIP.stat().st_size)}）…")
+    with zipfile.ZipFile(BUNDLE_ZIP) as zf:
+        zf.extractall(HERE)
+    if not READY.is_dir():
+        raise SystemExit(f"解压后仍然没有 {READY}；zip 结构不对")
+    print(f"  解压完成：{len(list(READY.iterdir()))} 个 skill\n")
+    return READY
 
 
 def parse_args(argv=None):
@@ -106,9 +129,8 @@ def load_host(root: Path):
 
 
 def skill_ids(only: str) -> list[str]:
-    if not READY.is_dir():
-        raise SystemExit(f"找不到 {READY}；先跑 build.py")
-    found = sorted(p.name for p in READY.iterdir() if p.is_dir())
+    ready = ensure_ready()
+    found = sorted(p.name for p in ready.iterdir() if p.is_dir())
     if not only:
         return found
     wanted = [s.strip() for s in only.split(",") if s.strip()]
@@ -269,8 +291,9 @@ def main(argv=None) -> int:
         print("")
 
     done, skipped, failed = [], [], []
+    ready = ensure_ready()
     for ident in ids:
-        src = READY / ident
+        src = ready / ident
         dest = extensions / ident
 
         if args.uninstall:
