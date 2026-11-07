@@ -73,6 +73,9 @@ def parse_args(argv=None):
     parser.add_argument("--only", default="")
     parser.add_argument("--timeout", type=float, default=45.0)
     parser.add_argument("--json", default="", help="把结果写到这个 json 文件")
+    parser.add_argument("--all-tools", action="store_true",
+                        help="每个 skill 的全部工具都真调一遍（默认只调第一个）。"
+                             "1179 个工具约 25~30 分钟，因为每次调用都要起一个 node 子进程")
     return parser.parse_args(argv)
 
 
@@ -139,6 +142,7 @@ def main(argv=None) -> int:
     # 工具清单：从宿主重建的 skill-tools.json 里读，拿每个 skill 的第一个工具名
     manifest_path = data_dir / skill_tools.MANIFEST_FILE
     first_tool = {}
+    all_tools = {}          # sid -> [工具名, ...]（--all-tools 用）
     if manifest_path.is_file():
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         for item in manifest.get("skills") or []:
@@ -147,6 +151,7 @@ def main(argv=None) -> int:
                      if isinstance(t, dict) and t.get("name")]
             if sid and tools:
                 first_tool[sid] = tools[0]
+                all_tools[sid] = tools
     naked = [sid for sid, name in first_tool.items() if "__" not in name]
     if naked:
         print(f"  注意：{len(naked)} 个 skill 的工具名没有 __ 前缀（宿主 skill 清单补丁没打？）："
@@ -255,38 +260,97 @@ def main(argv=None) -> int:
                 rows.append(row)
                 continue
 
-            ok = bool(out.get("ok"))
-            err = str(out.get("error") or "")
-            value = out.get("value") or {}
-            text = ""
-            if isinstance(value, dict):
-                content = value.get("content")
-                if isinstance(content, list) and content:
-                    first = content[0] if isinstance(content[0], dict) else {}
-                    text = str(first.get("text") or "")
-                elif isinstance(content, str):
-                    text = content
-                if not text:
-                    text = str(value.get("content") or value.get("text") or "")
-            text = text.strip()
-            row.update(ok=ok, durationMs=out.get("duration_ms"), error=err,
-                       preview=text[:160])
-            if used != tool:
-                row["usedTool"] = used
-            if ok:
-                row["verdict"] = "ok"
-            elif err and "不属于" in err:
-                # 清单里的工具名与运行期注册的名字对不上 —— 这是真问题，不是业务前置
-                row["verdict"] = "load-failed"
-            elif err:
-                # 子进程正常跑完、业务层报错 —— 不是加载失败
-                row["verdict"] = "ran-blocked"
-            else:
-                row["verdict"] = "ok"
-            rows.append(row)
+            rows.append(judge(row, out, used, tool))
         return rows
 
-    rows = asyncio.run(run_all())
+    def judge(row, out, used, tool):
+        """把一次 call_tool 的返回判成 verdict，就地更新 row 并返回。"""
+        ok = bool(out.get("ok"))
+        err = str(out.get("error") or "")
+        value = out.get("value") or {}
+        text = ""
+        if isinstance(value, dict):
+            content = value.get("content")
+            if isinstance(content, list) and content:
+                first = content[0] if isinstance(content[0], dict) else {}
+                text = str(first.get("text") or "")
+            elif isinstance(content, str):
+                text = content
+            if not text:
+                text = str(value.get("content") or value.get("text") or "")
+        text = text.strip()
+        row.update(ok=ok, durationMs=out.get("duration_ms"), error=err,
+                   preview=text[:160])
+        if used != tool:
+            row["usedTool"] = used
+        if ok:
+            row["verdict"] = "ok"
+        elif err and "不属于" in err:
+            # 清单里的工具名与运行期注册的名字对不上 —— 这是真问题，不是业务前置
+            row["verdict"] = "load-failed"
+        elif err:
+            # 子进程正常跑完、业务层报错 —— 不是加载失败
+            row["verdict"] = "ran-blocked"
+        else:
+            row["verdict"] = "ok"
+        return row
+
+    async def run_every_tool():
+        """--all-tools：每个 skill 的每个工具都调一遍，一行一个工具。"""
+        tool_rows = []
+        total = sum(len(all_tools.get(sid, [])) for sid in installed)
+        done = 0
+        for sid in installed:
+            for tool in all_tools.get(sid, []):
+                done += 1
+                if done % 50 == 0 or done == total:
+                    print(f"  ... {done}/{total}", flush=True)
+                row = {"skill": sid, "tool": tool, "registry": sid in enabled,
+                       "hostConfig": cfg.get(sid), "ok": False, "verdict": "", "error": ""}
+                try:
+                    out, used = await call_one(sid, tool)
+                except Exception as exc:  # noqa: BLE001
+                    row["verdict"] = "load-failed"
+                    row["error"] = f"{type(exc).__name__}: {exc}"
+                    tool_rows.append(row)
+                    continue
+                tool_rows.append(judge(row, out, used, tool))
+        return tool_rows
+
+    tool_rows = []
+    if args.all_tools:
+        _n = sum(len(all_tools.get(sid, [])) for sid in installed)
+        print(f"\n--all-tools：共 {_n} 个工具逐个真调"
+              f"（预计 25~30 分钟）")
+        tool_rows = asyncio.run(run_every_tool())
+        # skill 级汇总：任一工具 load-failed → 该 skill load-failed；
+        # 有 ok → ok；全 ran-blocked → ran-blocked；无工具 → 走 probe_loaded。
+        by_skill = {}
+        for r in tool_rows:
+            by_skill.setdefault(r["skill"], []).append(r)
+        rows = []
+        for sid in installed:
+            group = by_skill.get(sid) or []
+            if not group:
+                row = {"skill": sid, "tool": "", "registry": sid in enabled,
+                       "hostConfig": cfg.get(sid), "ok": False, "verdict": "", "error": ""}
+                verdict, why = asyncio.run(probe_loaded(sid))
+                row["verdict"] = verdict
+                row["ok"] = verdict == "ok"
+                row["error"] = "" if verdict == "ok" else why
+                rows.append(row)
+                continue
+            fails = [r for r in group if r["verdict"] == "load-failed"]
+            oks = [r for r in group if r["verdict"] == "ok"]
+            verdict = ("load-failed" if fails else "ok" if oks else "ran-blocked")
+            rows.append({"skill": sid, "tool": group[0]["tool"],
+                         "registry": sid in enabled, "hostConfig": cfg.get(sid),
+                         "ok": verdict == "ok", "verdict": verdict,
+                         "error": (fails[0]["error"] if fails else
+                                   "" if oks else group[0]["error"]),
+                         "tools": len(group), "toolsOk": len(oks)})
+    else:
+        rows = asyncio.run(run_all())
 
     print("")
     print(f"{'skill':<22}{'registry':<10}{'hostCfg':<9}{'verdict':<14}ms")
@@ -303,6 +367,14 @@ def main(argv=None) -> int:
     print("")
     print(f"ok {len(ok)} / ran-blocked {len(blocked)} / no-tool {len(no_tool)} / "
           f"load-failed {len(bad)}")
+    if tool_rows:
+        t_ok = [r for r in tool_rows if r["verdict"] == "ok"]
+        t_blk = [r for r in tool_rows if r["verdict"] == "ran-blocked"]
+        t_bad = [r for r in tool_rows if r["verdict"] == "load-failed"]
+        print(f"工具级：共 {len(tool_rows)} 个 → ok {len(t_ok)} / "
+              f"ran-blocked {len(t_blk)} / load-failed {len(t_bad)}")
+        for r in t_bad[:20]:
+            print(f"  工具加载失败 {r['skill']}::{r['tool']}: {r['error'][:120]}")
     for row in bad:
         print(f"  加载失败 {row['skill']}: {row['error'][:150]}")
     for row in blocked:
@@ -312,9 +384,15 @@ def main(argv=None) -> int:
 
     if args.json:
         Path(args.json).write_text(
-            json.dumps({"rows": rows, "counts": {
+            json.dumps({"rows": rows, "toolRows": tool_rows, "counts": {
                 "ok": len(ok), "ranBlocked": len(blocked),
-                "noTool": len(no_tool), "loadFailed": len(bad)}},
+                "noTool": len(no_tool), "loadFailed": len(bad),
+                "tools": len(tool_rows),
+                "toolsOk": sum(1 for r in tool_rows if r["verdict"] == "ok"),
+                "toolsRanBlocked": sum(1 for r in tool_rows
+                                       if r["verdict"] == "ran-blocked"),
+                "toolsLoadFailed": sum(1 for r in tool_rows
+                                       if r["verdict"] == "load-failed")}},
                 ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"\n结果写到 {args.json}")
 

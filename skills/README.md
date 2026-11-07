@@ -326,7 +326,16 @@ python -X utf8 verify.py --only kaomoji,csgo-5e
 
 # 结果存成 json
 python -X utf8 verify.py --json result.json
+
+# 每个 skill 的**全部**工具都真调一遍（默认只调第一个）
+python -X utf8 verify.py --all-tools --json result.json
 ```
+
+**默认口径是「每个 skill 调第一个工具」**：373 次调用覆盖 373 个工具，另外 806 个
+（合计 1179）没被真跑过 —— 它证明的是「这个包装得上、第一个工具能跑」，不保证其余工具能跑。
+要全量覆盖用 `--all-tools`：1179 次调用、每次起一个 node 子进程，约 25~30 分钟；
+输出多一段「工具级：共 1179 个 → ok / ran-blocked / load-failed」，JSON 里多 `toolRows`。
+单工具失败不影响同包其它工具，skill 级判定是「任一工具 load-failed → 该 skill load-failed」。
 
 判定口径：
 
