@@ -41,7 +41,24 @@ HERE = Path(__file__).resolve().parent
 READY = HERE / "ready"
 BUNDLE_ZIP = HERE / "dist" / "ready-all.zip"
 
-DEFAULT_HOST = Path(r"D:\qq机器人5.0")
+def _default_host() -> Path:
+    """探测宿主根：环境变量 > 本机开发布局 > 常见安装位置。"""
+    import os
+
+    env = os.environ.get("QQ_HOST_ROOT", "").strip()
+    if env:
+        return Path(env)
+    dev = Path(r"D:\qq机器人5.0")
+    if dev.is_dir():
+        return dev
+    local = os.environ.get("LOCALAPPDATA")
+    for cand in ([Path(local) / "WhaleGirlQQ"] if local else []) + [Path.home() / "WhaleGirlQQ"]:
+        if cand.is_dir():
+            return cand
+    return dev  # 都不在就保持原值，由调用方报「宿主根不存在」
+
+
+DEFAULT_HOST = _default_host()
 
 
 def ensure_ready() -> Path:

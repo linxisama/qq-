@@ -26,7 +26,24 @@ import re
 import sys
 from pathlib import Path
 
-DEFAULT_HOST = Path(r"D:\qq机器人5.0")
+def _default_host() -> Path:
+    """探测宿主根：环境变量 > 本机开发布局 > 常见安装位置。"""
+    import os
+
+    env = os.environ.get("QQ_HOST_ROOT", "").strip()
+    if env:
+        return Path(env)
+    dev = Path(r"D:\qq机器人5.0")
+    if dev.is_dir():
+        return dev
+    local = os.environ.get("LOCALAPPDATA")
+    for cand in ([Path(local) / "WhaleGirlQQ"] if local else []) + [Path.home() / "WhaleGirlQQ"]:
+        if cand.is_dir():
+            return cand
+    return dev  # 都不在就保持原值，由调用方报「宿主根不存在」
+
+
+DEFAULT_HOST = _default_host()
 
 # 运行期宿主给工具 id 加的清洗规则，见 runtime/qqagent-host/src/plugin-loader.js:81-86：
 #   sanitize = (s) => String(s ?? '').replace(/[^a-zA-Z0-9_-]/g, '_')
@@ -63,6 +80,12 @@ def main(argv=None) -> int:
     args = parse_args(argv)
     root = Path(args.root).expanduser()
     data_root = Path(args.data_root).expanduser() if args.data_root else root
+    # 先校验宿主根再 import：否则 --root 指错时用户只看到
+    # `ModuleNotFoundError: No module named 'src'`，不知道是自己路径写错了。
+    if not (root / "src" / "skill_tools.py").is_file():
+        raise SystemExit(
+            f"{root} 看起来不是 QQ Agent 仓库根（缺 src/skill_tools.py）。\n"
+            f"  用 --root 指向宿主仓库根，或设环境变量 QQ_HOST_ROOT。")
     if str(root) not in sys.path:
         sys.path.insert(0, str(root))
 
