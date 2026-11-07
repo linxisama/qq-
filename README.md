@@ -20,6 +20,11 @@
 `market/` 走控制台安装器（`plugin_install_service`），`plugins/` 走 `custom_plugins` 目录直装。
 **同一个 id 只装一种**，否则 `PluginManager` 会看到两份。
 
+两边的源码由 `market/build.py` 保持同步：它只替换 zip 里的 `<id>.py`，
+保留市场包原有的 `plugin.json` 与 `使用说明.md`（`plugin.json` 的 `config` 数组是
+从插件的 `FieldSchema` 反解出来的，`plugins/` 侧没有等价物，覆盖会丢设置项）。
+`python market/build.py` 预演、`--apply` 重打、`--bundle` 再打整包。
+
 ---
 
 ## 快速开始
@@ -71,7 +76,7 @@ set PY=D:\qq机器人5.0\.venv-qq\Scripts\python.exe
 |------|------|------|
 | `plugins/dist/qq-plugin-packs-all.zip` | 368 KB | 66 个插件包 + 4 份 `.patch` |
 | `skills/dist/ready-all.zip` | 35 MB | 373 个 skill（1572 条目）+ 根级脚本与文档 |
-| `market/qq插件-市场-5.2.51.zip` | 310 KB | 42 个市场包 + index + 使用说明 |
+| `market/qq插件-市场-5.2.51.zip` | 311 KB | 42 个市场包 + index + 使用说明（86 条目） |
 | `heart/dsh-heart-qq-0.1.0.zip` | 33 KB | 心情插件自包含分发包 |
 
 逐包 zip（`skills/dist/ready-zips/`，373 个共 34.9 MB）**没有进仓库** —— 内容与 `ready-all.zip` 完全重复。
