@@ -16,14 +16,16 @@ from __future__ import annotations
 import asyncio
 import inspect
 import json
+import os
 import shutil
 import sys
 import time
 import traceback
 from pathlib import Path
 
-HOST = Path(r"D:\qq机器人5.0")
-ROOT = Path(r"D:\插件\qq-plugin-packs")
+HOST = Path(os.environ.get("QQ_HOST_ROOT", r"D:\qq机器人5.0"))
+# 产物根默认就是本脚本所在的 plugins/（packs/、overrides/、INDEX.json 都在这里）
+ROOT = Path(os.environ.get("QQ_PLUGIN_OUT", str(Path(__file__).resolve().parent)))
 sys.path.insert(0, str(HOST))
 
 from src.plugins.manager import PluginManager  # noqa: E402

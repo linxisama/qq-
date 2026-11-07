@@ -50,7 +50,7 @@ VERIFY_JSON = AUDIT / "verify_373.json"
 VERIFY_PREV_JSON = AUDIT / "verify_371.json"
 VERIFY_LEGACY_JSON = AUDIT / "skill_verify_installed.json"
 
-MARKET_DIR = Path(r"D:\聊天机器人\插件市场\Skill市场")
+MARKET_DIR = Path(os.environ.get("QQ_SKILL_MARKET", r"D:\聊天机器人\插件市场\Skill市场"))
 
 READY = HERE / "ready"
 DIST = HERE / "dist"
@@ -746,6 +746,13 @@ def write_index(ready: dict, tiers: dict, market: dict, eligible: dict) -> None:
 
 
 def main() -> int:
+    missing = [p.name for p in (TIERS_JSON, ELIGIBLE_JSON) if not p.is_file()]
+    if missing:
+        print(f"缺少构建输入：{', '.join(missing)}\n"
+              f"  它们由宿主的 skill_manifest.classify() 扫市场生成，属开发机资产（_audit/）。\n"
+              f"  只想装已发布的 skill 的话不用重建，直接跑 install.py 即可"
+              f"（它会从 dist/ready-all.zip 解压）。")
+        return 1
     tiers = load(TIERS_JSON)
     eligible = load(ELIGIBLE_JSON)
     runs = load(RUNS_JSON) if RUNS_JSON.is_file() else {"runs": []}

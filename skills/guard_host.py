@@ -8,14 +8,16 @@ r"""宿主补丁守护：检测 src/ 是否被还原，还原了就自动重打�
     python -X utf8 guard_host.py            # 检查 + 自动修复
     python -X utf8 guard_host.py --check    # 只看，不改
 """
+import os
 import subprocess
 import sys
 from pathlib import Path
 
-PY = r"D:\qq机器人5.0\.venv-qq\Scripts\python.exe"
-PACKS = Path(r"D:\插件\qq-skill-packs")
+ROOT = os.environ.get("QQ_HOST_ROOT", r"D:\qq机器人5.0")
+PY = os.environ.get("QQ_PY", str(Path(ROOT) / ".venv-qq" / "Scripts" / "python.exe"))
+# hostfix.py 就在本文件旁边；换台机器 clone 下来也不用改路径
+PACKS = Path(__file__).resolve().parent
 HOSTFIX = PACKS / "hostfix.py"
-ROOT = r"D:\qq机器人5.0"
 
 # 这些串出现 = 补丁被回滚（与 check_all.py 的 patch_gone 同口径）
 GONE = {

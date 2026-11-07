@@ -33,14 +33,16 @@ from __future__ import annotations
 import ast
 import hashlib
 import json
+import os
 import shutil
 import sys
 import textwrap
 import zipfile
 from pathlib import Path
 
-HOST = Path(r"D:\qq机器人5.0")
-OUT = Path(r"D:\插件\qq-plugin-packs")
+HOST = Path(os.environ.get("QQ_HOST_ROOT", r"D:\qq机器人5.0"))
+# 产物目录默认就是本脚本所在的 plugins/，换台机器 clone 下来也能直接重建
+OUT = Path(os.environ.get("QQ_PLUGIN_OUT", str(Path(__file__).resolve().parent)))
 HOST_VERSION = (HOST / "version.txt").read_text(encoding="utf-8").strip()
 
 sys.path.insert(0, str(HOST))
