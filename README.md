@@ -87,7 +87,7 @@ set PY=D:\qq机器人5.0\.venv-qq\Scripts\python.exe
 | 技能包注册 | **373/373 注册成功，failed 0** |
 | 技能包真跑 | **ok 334 / ran-blocked 39 / load-failed 0 / no-tool 0**（373 条逐个调用；生产机同批次是 ok 333/40，只差 `tieba-summary` 撞 45s 超时） |
 | 分发包端到端 | 解压 → install → verify，与生产逐条 diff 只差随机网络超时的包 |
-| 宿主补丁 | `hostfix.py --check` **34/34 已修**；守卫测试 `tests/test_skill_bridge_invariants.py` **12/12 OK** |
+| 宿主补丁 | `hostfix.py --check` **34/34 已修**；守卫测试 `tests/test_skill_bridge_invariants.py` **13/13 OK** |
 | 一致性 | 仓库脚本与 `dist/` 内副本 sha256 全一致 |
 
 39~40 个 `ran-blocked` 全部是**业务前置**（缺 API Key 7、缺 ffmpeg 3、缺群号参数 3、网络超时 2、缺知识库 1、
@@ -141,9 +141,10 @@ qqplugin/
   `chat-digest` 硬依赖 `electron`（`npm:electron` 闸判定不放行）。
 - **能力桥扩展**（白名单 7→12、5 个新消费点）在宿主 5.2.110 上是死代码 —— 需要宿主升级到 5.2.112+
   才有调用点。本仓库只提供源码侧改动，不含重打包的 exe。
-- **宿主 `src/` 会被外部进程还原**。已实测 5 次（04:56 / 07:03 / 11:43 / 12:48 / 13:10），
+- **宿主 `src/` 会被外部进程还原**。已实测 6 次（04:56 / 07:03 / 11:43 / 12:48 / 13:10 / 16:57），
   回滚源是 `tests/test_skill_bridge_invariants.py` 在跑 `unittest` 时按断言改写源码。
-  现该测试 12/12 通过；万一再被还原，跑 `skills/guard_host.py` 一条命令修回。
+  现该测试 13/13 通过；万一再被还原，跑 `skills/guard_host.py` 一条命令修回，
+  用 `skills/hostfix.py --check` 确认「全部已修，无需操作」。
 
 ---
 
