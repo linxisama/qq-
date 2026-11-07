@@ -74,8 +74,8 @@ set PY=D:\qq机器人5.0\.venv-qq\Scripts\python.exe
 | `market/qq插件-市场-5.2.51.zip` | 311 KB | 42 个市场包 + index + 使用说明 |
 | `heart/dsh-heart-qq-0.1.0.zip` | 33 KB | 心情插件自包含分发包 |
 
-逐包 zip（`skills/dist/ready-zips/`，373 个共 34.9 MB）**没有进仓库** —— 内容与 `ready-all.zip` 完全重复，
-需要时跑 `skills/build.py` 重新生成。
+逐包 zip（`skills/dist/ready-zips/`，373 个共 34.9 MB）**没有进仓库** —— 内容与 `ready-all.zip` 完全重复。
+要单独分发某个 skill，直接从 `ready-all.zip` 里取 `ready/<id>/` 即可；`install.py` 首次运行也会自动解压到 `skills/ready/`。
 
 ---
 
@@ -87,6 +87,7 @@ set PY=D:\qq机器人5.0\.venv-qq\Scripts\python.exe
 | 技能包注册 | **373/373 注册成功，failed 0** |
 | 技能包真跑 | **ok 334 / ran-blocked 39 / load-failed 0 / no-tool 0**（373 条逐个调用；生产机同批次是 ok 333/40，只差 `tieba-summary` 撞 45s 超时） |
 | 分发包端到端 | 解压 → install → verify，与生产逐条 diff 只差随机网络超时的包 |
+| 模拟 clone | 只带 git 跟踪的文件（无 `ready/`、无 `ready-zips/`）→ `install.py --apply` 373 个全装成 → `verify.py` **ok 334 / ran-blocked 39**，与生产只差 `tieba-summary` |
 | 宿主补丁 | `hostfix.py --check` **34/34 已修**；守卫测试 `tests/test_skill_bridge_invariants.py` **13/13 OK** |
 | 一致性 | 仓库脚本与 `dist/` 内副本 sha256 全一致 |
 
