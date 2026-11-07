@@ -91,6 +91,9 @@ set PY=D:\qq机器人5.0\.venv-qq\Scripts\python.exe
 | 心情插件 | `heart/verify.py` → **全部通过**（宿主 6 个面板接线点全在） |
 | 宿主补丁 | `hostfix.py --check` **34/34 已修**；守卫测试 `tests/test_skill_bridge_invariants.py` **13/13 OK** |
 | 一致性 | 仓库脚本与 `dist/ready-all.zip` 内副本 sha256 全一致（8 个根级文件） |
+| 真 clone | 从 GitHub 重新 `git clone` 到空目录 → `plugins/install.py --apply` 66 个、`plugins/verify.py` 66/66；`skills/install.py --apply` 373 个、`skills/verify.py` 抽样 3 个全通过；`market/tools/verify_market.py` 42/42；`heart/verify.py` 全部通过 |
+| 可复现打包 | `plugins/build.py` 连跑两次，**67 个 zip 逐字节完全相同**（时间戳固定 `2020-01-01`，`QQ_ZIP_DATE` 可覆盖） |
+| 路径容错 | `QQ_HOST_ROOT` 指到不存在的目录 → `install.py` / `verify.py` 均 exit 1 并打印「看起来不是 QQ Agent 仓库根（缺 src/skill_tools.py）」 |
 
 39~40 个 `ran-blocked` 全部是**业务前置**（缺 API Key 7、缺 ffmpeg 3、缺群号参数 3、网络超时 2、缺知识库 1、
 业务状态未满足 24），**没有一个是包自身可修的**。详见 [`skills/REPORT.md`](skills/REPORT.md)。
@@ -99,10 +102,15 @@ set PY=D:\qq机器人5.0\.venv-qq\Scripts\python.exe
 
 ## 环境要求
 
-- **Windows**（路径与宿主一致；脚本按 `D:\qq机器人5.0` 默认，可用 `--root` 改）
+- **Windows**（宿主是 Windows 桌面程序；脚本本身是纯标准库 Python）
 - 宿主自带的 **Python 3.12**（`.venv-qq`）；纯标准库，无第三方依赖
 - 宿主版本 **5.2.112**（补丁锚点按这个版本写；版本不符会报「找不到锚点」而不是乱改）
 - `node` 在 `PATH` 里（技能包真跑要用宿主的 `host-one.mjs`）
+
+**宿主根怎么找**：脚本按 `QQ_HOST_ROOT` 环境变量 > `D:\qq机器人5.0`（本机开发布局）
+> `%LOCALAPPDATA%\WhaleGirlQQ` > `~\WhaleGirlQQ` 的顺序探测；都不中就退回
+`D:\qq机器人5.0` 并由脚本报「看起来不是 QQ Agent 仓库根（缺 src/skill_tools.py）」，
+不会在错的盘上静默建目录。也可以显式传 `--root` / `--dir`。
 
 ---
 
