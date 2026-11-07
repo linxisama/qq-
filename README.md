@@ -25,6 +25,11 @@
 从插件的 `FieldSchema` 反解出来的，`plugins/` 侧没有等价物，覆盖会丢设置项）。
 `python market/build.py` 预演、`--apply` 重打、`--bundle` 再打整包。
 
+市场包的 `plugin.json` 必须带 `"api_version": 1`，否则宿主 `_read_mod_manifest`
+（`src/plugins/manager.py:846`）会以 `bad_api_version` 把目录 mod 拒掉，只剩裸 `.py`
+通道生效 —— 插件能跑，但拿不到 ModRuntime 门面（钩子 2s 超时保护、工具注册走 mod 表都失效）。
+本仓库的 42 个包已全部补上；`plugins/` 侧 32 个目录包本来就带这个字段。
+
 ---
 
 ## 快速开始
