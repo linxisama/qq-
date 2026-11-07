@@ -424,7 +424,11 @@ def build() -> dict:
             if not p.is_file():
                 continue
             rel = p.relative_to(OUT)
+            # 跳过 dist（产物自己）、任何点开头目录、__pycache__（本地跑过 build.py
+            # 就会生成，曾经把 build.cpython-312.pyc 打进过发布包）与 .pyc。
             if rel.parts[0] == "dist" or rel.parts[0].startswith("."):
+                continue
+            if "__pycache__" in rel.parts or p.suffix == ".pyc":
                 continue
             if p.name in skip_names:
                 continue
