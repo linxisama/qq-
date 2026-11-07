@@ -36,6 +36,20 @@ BAD = ' FAIL '
 WARN = ' warn '
 
 
+def _same_text(a: Path, b: Path) -> bool:
+    """按文本比而不是按字节比。
+
+    install.py 写盘时会把 CRLF 归一成 LF（包内 17/663/330 个 CRLF，安装后 0 个），
+    直接比字节就会把「只差换行」报成「安装后被改过」——实测三个文件逐行 diff 都是 0 行。
+    """
+    try:
+        left = a.read_bytes().replace(b'\r\n', b'\n')
+        right = b.read_bytes().replace(b'\r\n', b'\n')
+    except OSError:
+        return False
+    return left == right
+
+
 def check_plugin(custom_dir: Path, problems: list, warns: list):
     dst = custom_dir / I.PLUGIN_ID
     if not dst.is_dir():
@@ -60,7 +74,7 @@ def check_plugin(custom_dir: Path, problems: list, warns: list):
     if src.is_dir():
         for name in ('plugin.json', 'heart_qq.py', 'web/heart.html'):
             a, b = dst / name, src / name
-            if a.is_file() and b.is_file() and a.read_bytes() != b.read_bytes():
+            if a.is_file() and b.is_file() and not _same_text(a, b):
                 warns.append('已安装的 %s 与包内版本不同（安装后被改过？）' % name)
 
 
@@ -68,7 +82,7 @@ def check_module(host_root: Path, problems: list, warns: list):
     dst = host_root / 'src' / 'heart_api.py'
     if not dst.is_file():
         problems.append('宿主模块缺失：%s（面板会 404）' % dst)
-    elif dst.read_bytes() != I.HOST_MODULE.read_bytes():
+    elif not _same_text(dst, I.HOST_MODULE):
         warns.append('src/heart_api.py 与包内 host/heart_api.py 不同')
 
 

@@ -299,6 +299,20 @@ def backup(path: Path) -> Path:
 # --------------------------------------------------------------------------- #
 # 计划
 # --------------------------------------------------------------------------- #
+def _same_text(a: Path, b: Path) -> bool:
+    """按文本比而不是按字节比：只差换行不算「内容不同」。
+
+    装过的文件是 LF、包内是 CRLF 时逐字节比永远不等，会把用户可能手工改过的
+    文件无声覆盖掉。归一化 CRLF 之后再比。
+    """
+    try:
+        left = a.read_bytes().replace(b'\r\n', b'\n')
+        right = b.read_bytes().replace(b'\r\n', b'\n')
+    except OSError:
+        return False
+    return left == right
+
+
 def build_plan(custom_dir: Path, host_root: Path, overwrite: bool):
     steps = []
 
@@ -314,12 +328,7 @@ def build_plan(custom_dir: Path, host_root: Path, overwrite: bool):
     })
 
     dst_api = host_root / 'src' / 'heart_api.py'
-    same = False
-    if dst_api.is_file():
-        try:
-            same = dst_api.read_bytes() == HOST_MODULE.read_bytes()
-        except OSError:
-            same = False
+    same = _same_text(dst_api, HOST_MODULE) if dst_api.is_file() else False
     steps.append({
         'kind': 'module',
         'label': '宿主模块 src/heart_api.py',
