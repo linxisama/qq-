@@ -170,6 +170,15 @@ def run(cmd: list, timeout: int) -> tuple:
         return 124, f"超时（>{timeout}s）"
 
 
+def first_reason(out: str, code: int) -> str:
+    """从失败输出里挑一句最有信息量的话，别只报 exit=1。"""
+    lines = [ln.strip() for ln in out.splitlines() if ln.strip()]
+    for ln in lines:
+        if any(k in ln for k in ("看起来不是", "请用", "缺", "找不到", "Traceback")):
+            return ln[:110]
+    return (lines[-1][:110] if lines else f"exit={code}")
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="qqplugin 一键自检（只读）")
     ap.add_argument("--quick", action="store_true",
@@ -190,6 +199,13 @@ def main(argv=None) -> int:
     print(f"python   : {py}")
     print()
 
+    host_ok = (host / "src" / "skill_tools.py").is_file()
+    if not host_ok:
+        print(f"⚠ 宿主根 {host} 下没有 src/skill_tools.py —— "
+              "插件 / 技能 / 市场 / 心情四项都会失败。")
+        print("  用 --host-root 指向真实宿主仓库根，或设环境变量 QQ_HOST_ROOT。")
+        print()
+
     # 1. 结构
     check_structure(rows)
 
@@ -199,7 +215,7 @@ def main(argv=None) -> int:
     for line in out.splitlines():
         if "mounted=" in line:
             mounted = line.strip()
-    rows.append(("插件包 66 个真装挂载", code == 0, mounted or f"exit={code}"))
+    rows.append(("插件包 66 个真装挂载", code == 0, mounted or first_reason(out, code)))
 
     # 3. 技能包
     if args.quick:
@@ -211,7 +227,7 @@ def main(argv=None) -> int:
         for line in out.splitlines():
             if line.startswith("ok ") and "ran-blocked" in line:
                 summary = line.strip()
-        rows.append(("技能包 373 个真跑", code == 0, summary or f"exit={code}"))
+        rows.append(("技能包 373 个真跑", code == 0, summary or first_reason(out, code)))
 
     # 4. 市场包
     code, out = run([py, "-X", "utf8", "market/tools/verify_market.py",
@@ -220,11 +236,11 @@ def main(argv=None) -> int:
     for line in out.splitlines():
         if "总计" in line:
             total = line.strip()
-    rows.append(("市场包 42 个", code == 0, total or f"exit={code}"))
+    rows.append(("市场包 42 个", code == 0, total or first_reason(out, code)))
 
     # 5. 心情插件
     code, out = run([py, "-X", "utf8", "heart/verify.py", "--host-dir", str(host)], 300)
-    rows.append(("心情插件", code == 0, "全部通过" if code == 0 else f"exit={code}"))
+    rows.append(("心情插件", code == 0, "全部通过" if code == 0 else first_reason(out, code)))
 
     print()
     print("=" * 62)
