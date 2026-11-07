@@ -83,13 +83,14 @@ set PY=D:\qq机器人5.0\.venv-qq\Scripts\python.exe
 
 | 项 | 结果 |
 |----|------|
-| 插件包装机 | 挂载 **68/66**（含 2 个宿主内置同名），`missing=[]`、`wrong_channel=[]`、`refusals={}` |
+| 插件包装机 | `plugins/verify.py` → **mounted 66/66**，`missing=[]`、`wrong_channel=[]`、`refusals={}`；生产机因含 2 个宿主内置同名包显示 68/66 |
 | 技能包注册 | **373/373 注册成功，failed 0** |
 | 技能包真跑 | **ok 334 / ran-blocked 39 / load-failed 0 / no-tool 0**（373 条逐个调用；生产机同批次是 ok 333/40，只差 `tieba-summary` 撞 45s 超时） |
-| 分发包端到端 | 解压 → install → verify，与生产逐条 diff 只差随机网络超时的包 |
 | 模拟 clone | 只带 git 跟踪的文件（无 `ready/`、无 `ready-zips/`）→ `install.py --apply` 373 个全装成 → `verify.py` **ok 334 / ran-blocked 39**，与生产只差 `tieba-summary` |
+| 市场包 | `market/tools/verify_market.py --console D:\qq机器人5.0` → **42 个全部 PASS**，`index.json` 的 sha256 与字节数逐条对得上 |
+| 心情插件 | `heart/verify.py` → **全部通过**（宿主 6 个面板接线点全在） |
 | 宿主补丁 | `hostfix.py --check` **34/34 已修**；守卫测试 `tests/test_skill_bridge_invariants.py` **13/13 OK** |
-| 一致性 | 仓库脚本与 `dist/` 内副本 sha256 全一致 |
+| 一致性 | 仓库脚本与 `dist/ready-all.zip` 内副本 sha256 全一致（8 个根级文件） |
 
 39~40 个 `ran-blocked` 全部是**业务前置**（缺 API Key 7、缺 ffmpeg 3、缺群号参数 3、网络超时 2、缺知识库 1、
 业务状态未满足 24），**没有一个是包自身可修的**。详见 [`skills/REPORT.md`](skills/REPORT.md)。
