@@ -60,7 +60,7 @@
 | `group_cost_report` | 群友花费统计 | utility | 否 | 钩子直接读宿主 runtime.account/runtime.db/runtime.mode |
 | `hot_trend_tracker` | 热梗与热点收集 | utility | 是 | 钩子里联网读网页，单次超时预算可达 4~6 秒，超过目录 mod 的 2 秒围栏 |
 | `icebreaker` | 定时暖场 | utility | 否 | 钩子直接读宿主 runtime.ai_lock/runtime.can_send_proactive/runtime.has_plugin_outgoing/runtime.last_interaction/runtime.onebot/runtime.queue_plugin_outgoing/runtime.recent_chats/runtime.style |
-| `image_library` | 表情包与自定义图库 | media | 是 | 钩子直接读宿主 runtime.mode |
+| `image_library` | 表情包与自定义图库 | media | 是 | 钩子直接读宿主 runtime.config/runtime.mode |
 | `image_understanding` | 图片与表情包识别 | utility | 是 | 钩子直接读宿主 runtime.ai/runtime.bridge/runtime.mode/runtime.onebot |
 | `long_image_reader` | 长图分段阅读 | media | 是 | 钩子直接读宿主 runtime.ai/runtime.bridge/runtime.mode/runtime.onebot |
 | `market_probe` | 市场探针 | utility | 否 | 钩子直接读宿主 runtime.plugins；钩子里联网读网页，单次超时预算可达 4~6 秒，超过目录 mod 的 2 秒围栏 |

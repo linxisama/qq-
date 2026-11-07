@@ -38,6 +38,7 @@ import shutil
 import sys
 import textwrap
 import zipfile
+from datetime import datetime
 from pathlib import Path
 
 HOST = Path(os.environ.get("QQ_HOST_ROOT", r"D:\qq机器人5.0"))
@@ -243,16 +244,43 @@ def load_metas() -> dict:
 # --------------------------------------------------------------------------- #
 # 打包
 # --------------------------------------------------------------------------- #
+# 可复现打包：zip 内时间戳固定，不随文件 mtime 变。
+# 不固定的话，源码没改也会因为 mtime 变化让 68 个 zip 全部显示为改动
+# （实测 affinity.zip 新旧 CRC 相同、date_time 从 11-06 变 11-07，diff 全是噪声）。
+# 需要真实时间时设 QQ_ZIP_DATE=2026-11-07T12:00:00。
+_ZIP_EPOCH = os.environ.get("QQ_ZIP_DATE", "2020-01-01T00:00:00")
+
+
+def _zip_date_time() -> tuple:
+    text = _ZIP_EPOCH.strip().replace("Z", "")
+    try:
+        dt = datetime.fromisoformat(text)
+    except ValueError:
+        dt = datetime(2020, 1, 1)
+    # zip 的时间戳字段下限是 1980-01-01
+    if dt.year < 1980:
+        dt = dt.replace(year=1980, month=1, day=1)
+    return (dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
+
+
+def _zip_entry(zf: zipfile.ZipFile, src: Path, arcname: str) -> None:
+    """写一个条目：内容取自 src，时间戳与权限位固定。"""
+    info = zipfile.ZipInfo(arcname, date_time=_zip_date_time())
+    info.compress_type = zipfile.ZIP_DEFLATED
+    info.external_attr = (0o755 if src.suffix in (".py", ".sh") else 0o644) << 16
+    zf.writestr(info, src.read_bytes())
+
+
 def zip_dir(src: Path, dest: Path, top: str) -> None:
     with zipfile.ZipFile(dest, "w", zipfile.ZIP_DEFLATED) as zf:
         for p in sorted(src.rglob("*")):
             if p.is_file():
-                zf.write(p, f"{top}/{p.relative_to(src).as_posix()}")
+                _zip_entry(zf, p, f"{top}/{p.relative_to(src).as_posix()}")
 
 
 def zip_file(src: Path, dest: Path, arcname: str) -> None:
     with zipfile.ZipFile(dest, "w", zipfile.ZIP_DEFLATED) as zf:
-        zf.write(src, arcname)
+        _zip_entry(zf, src, arcname)
 
 
 def patch_source(pid: str, code: str) -> tuple[str, str]:
@@ -400,9 +428,9 @@ def build() -> dict:
                 continue
             if p.name in skip_names:
                 continue
-            zf.write(p, f"qq-plugin-packs/{rel.as_posix()}")
+            _zip_entry(zf, p, f"qq-plugin-packs/{rel.as_posix()}")
         for name in ("INDEX.md", "INDEX.json"):
-            zf.write(OUT / name, f"qq-plugin-packs/{name}")
+            _zip_entry(zf, OUT / name, f"qq-plugin-packs/{name}")
 
     shutil.rmtree(OUT / ".build", ignore_errors=True)
     return report

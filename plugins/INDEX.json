@@ -969,9 +969,9 @@
         "quietStart",
         "temperature"
       ],
-      "lines": 356,
-      "sha256_source": "b9f08fdb556c99aef76c8ef33f8dbcc1dba19b06a147dd16a5583c16f6188b10",
-      "sha256_shipped": "b9f08fdb556c99aef76c8ef33f8dbcc1dba19b06a147dd16a5583c16f6188b10",
+      "lines": 370,
+      "sha256_source": "abecf40deda8ad1a00faf6bb05400944e75ab72ca4410c3241cdaa6b42c322ee",
+      "sha256_shipped": "abecf40deda8ad1a00faf6bb05400944e75ab72ca4410c3241cdaa6b42c322ee",
       "blocked_runtime_attrs": [
         "ai_lock",
         "can_send_proactive",
@@ -984,31 +984,31 @@
       ],
       "runtime_ref_lines": {
         "ai_lock": [
-          329
+          343
         ],
         "can_send_proactive": [
-          320
+          334
         ],
         "has_plugin_outgoing": [
-          320
+          334
         ],
         "last_interaction": [
-          266,
-          318,
-          338
+          280,
+          332,
+          352
         ],
         "onebot": [
-          349,
-          351
+          363,
+          365
         ],
         "queue_plugin_outgoing": [
-          345
+          359
         ],
         "recent_chats": [
-          248
+          262
         ],
         "style": [
-          326
+          44
         ]
       },
       "files": [
@@ -1022,7 +1022,7 @@
       "description": "上传图片并保存后，用 /表情 标签 发送；聊天模型也可按语境选择已登记图片。官方QQ与普通QQ均支持本机图片及公开链接。空图库不会猜图或复述收到的图片。",
       "category": "media",
       "channel": "override",
-      "channel_reason": "钩子直接读宿主 runtime.mode",
+      "channel_reason": "钩子直接读宿主 runtime.config/runtime.mode",
       "patched": false,
       "builtin": true,
       "enabled_by_default": true,
@@ -1040,20 +1040,26 @@
       "config_keys": [
         "asSticker",
         "autoSelect",
+        "descChars",
         "enabled",
+        "hintChars",
         "library",
         "separateMessages"
       ],
-      "lines": 167,
-      "sha256_source": "2950229aca3080dbe7462bff131c5434d8292a76e87b2f7067f521b935b87859",
-      "sha256_shipped": "2950229aca3080dbe7462bff131c5434d8292a76e87b2f7067f521b935b87859",
+      "lines": 289,
+      "sha256_source": "5ec8cefb688ba1d8bf7eb20cf197ff24d9edf0751a6b660d5ed0467f66b79aca",
+      "sha256_shipped": "5ec8cefb688ba1d8bf7eb20cf197ff24d9edf0751a6b660d5ed0467f66b79aca",
       "blocked_runtime_attrs": [
+        "config",
         "mode"
       ],
       "runtime_ref_lines": {
+        "config": [
+          130
+        ],
         "mode": [
-          76,
-          87
+          199,
+          210
         ]
       },
       "files": [
@@ -1762,9 +1768,9 @@
         "topics",
         "useModel"
       ],
-      "lines": 209,
-      "sha256_source": "4fee6ab507e8d814fdc96017c185e5c696962dd2d19dd1c74e984caf482724fa",
-      "sha256_shipped": "4fee6ab507e8d814fdc96017c185e5c696962dd2d19dd1c74e984caf482724fa",
+      "lines": 228,
+      "sha256_source": "d2e6e2bc023b778cc7c6b9dcd901cfec1029f6d37e7a3047b7efb56303d2d2a0",
+      "sha256_shipped": "d2e6e2bc023b778cc7c6b9dcd901cfec1029f6d37e7a3047b7efb56303d2d2a0",
       "blocked_runtime_attrs": [
         "ai",
         "ai_lock",
@@ -1778,31 +1784,31 @@
       ],
       "runtime_ref_lines": {
         "ai": [
-          196
+          215
         ],
         "ai_lock": [
-          195
+          214
         ],
         "can_send_proactive": [
-          155
+          169
         ],
         "db": [
-          126
-        ],
-        "has_plugin_outgoing": [
-          155
-        ],
-        "last_interaction": [
-          125
-        ],
-        "mode": [
           140
         ],
+        "has_plugin_outgoing": [
+          169
+        ],
+        "last_interaction": [
+          139
+        ],
+        "mode": [
+          154
+        ],
         "queue_plugin_outgoing": [
-          177
+          191
         ],
         "style": [
-          201
+          24
         ]
       },
       "files": [
@@ -2433,9 +2439,9 @@
         "targets",
         "wakeRange"
       ],
-      "lines": 182,
-      "sha256_source": "bf3485cb0693c87f653edbca92738a5769bf45d1c7b31cf64751a111f729c906",
-      "sha256_shipped": "bf3485cb0693c87f653edbca92738a5769bf45d1c7b31cf64751a111f729c906",
+      "lines": 193,
+      "sha256_source": "59eeae7b5869246229f33dc40ec0a5c0f0bf13099634727daec1a7518979d66a",
+      "sha256_shipped": "59eeae7b5869246229f33dc40ec0a5c0f0bf13099634727daec1a7518979d66a",
       "blocked_runtime_attrs": [
         "ai",
         "ai_lock",
@@ -2449,32 +2455,32 @@
       ],
       "runtime_ref_lines": {
         "ai": [
-          172
+          183
         ],
         "ai_lock": [
-          171
+          182
         ],
         "can_send_proactive": [
-          155
+          166
         ],
         "db": [
-          85,
-          100
+          96,
+          111
         ],
         "has_plugin_outgoing": [
-          156
+          167
         ],
         "last_interaction": [
-          84
+          95
         ],
         "last_outbound": [
-          98
+          109
         ],
         "queue_plugin_outgoing": [
-          164
+          175
         ],
         "style": [
-          177
+          18
         ]
       },
       "files": [
@@ -2905,9 +2911,9 @@
         "maxChars",
         "mode"
       ],
-      "lines": 97,
-      "sha256_source": "dee42281e5346461dbbb19e021f55fe098a974c4dbe6ad57f568fc66538ff000",
-      "sha256_shipped": "dee42281e5346461dbbb19e021f55fe098a974c4dbe6ad57f568fc66538ff000",
+      "lines": 101,
+      "sha256_source": "34001b30011226181a732a87184ee7de63c80d5a34fd487c2a1486c94dc30477",
+      "sha256_shipped": "34001b30011226181a732a87184ee7de63c80d5a34fd487c2a1486c94dc30477",
       "blocked_runtime_attrs": [],
       "runtime_ref_lines": {},
       "files": [

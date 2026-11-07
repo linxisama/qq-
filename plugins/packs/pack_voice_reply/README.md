@@ -13,7 +13,7 @@
 | 钩子 | on_pre_ai、on_post_reply |
 | 权限 | read_message, send_message |
 | 设置项 | enabled、fallbackToText、groupRequiresName、maxChars、mode |
-| 源码行数 | 97 |
+| 源码行数 | 101 |
 
 ## 安装
 
@@ -30,4 +30,4 @@
 
 本插件只访问 `ModRuntime` 门面，单个钩子耗时须低于 2 秒（超时会被跳过，
 连续 3 次失败后自动禁用）。源码与内置版本逐字节一致（sha256
-`dee42281e5346461…`），未做行为改动。
+`34001b3001122618…`），未做行为改动。
